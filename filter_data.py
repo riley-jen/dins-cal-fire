@@ -36,11 +36,17 @@ def read_file(raw_file, filter_dict):
 raw_filename = "../POSTFIRE_MASTER_DATA.geojson"
 select_features = read_file(raw_filename, select_incidents)
 
+'''
+handles json not being able to serialize decmials... hopefully
+'''
 def decimal_encoder(obj):
   if isinstance(obj, Decimal):
     return float(obj)
   return obj
 
+'''
+writes new .geojson file given a list of features
+'''
 def write_file(new_file, features):
   new_geojson = {
     "type": "FeatureCollection",
