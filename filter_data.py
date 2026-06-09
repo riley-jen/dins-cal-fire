@@ -1,6 +1,7 @@
 import json
 import ijson
 import geopandas as gpd
+from decimal import Decimal
 
 '''
 helper function that returns a dictionary from a list
@@ -35,3 +36,7 @@ def read_file(raw_file, filter_dict):
 raw_filename = "../POSTFIRE_MASTER_DATA.geojson"
 select_features = read_file(raw_filename, select_incidents)
 
+def decimal_encoder(obj):
+  if isinstance(obj, Decimal):
+    return float(obj)
+  return obj
