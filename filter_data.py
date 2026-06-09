@@ -12,7 +12,7 @@ def create_dict(list):
     new_dict[item] = 0
   return new_dict
 
-select_incidents_list = ["palisades", "mountain", "eaton", "franklin", "line", "bridge"]
+select_incidents_list = ["palisades", "mountain", "eaton", "franklin", "line", "bridge", "unspecified"]
 select_incidents = create_dict(select_incidents_list)
 
 '''
@@ -28,13 +28,18 @@ def read_file(raw_file, filter_dict):
       properties = feature.get('properties',{})
       incident = properties.get("INCIDENTNAME",'').lower()
 
+      if incident == None:
+        filter_dict["unspecified"] += 1
       if incident in filter_dict.keys():
         filter_dict[incident] += 1
         new_features.append(feature)
+
   return new_features
 
 raw_filename = "../POSTFIRE_MASTER_DATA.geojson"
 select_features = read_file(raw_filename, select_incidents)
+
+assert (select_incidents["unspecified"] == 0), "unspecified incidents present!"
 
 '''
 handles json not being able to serialize decmials... hopefully
