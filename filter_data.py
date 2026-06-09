@@ -30,7 +30,8 @@ def read_file(raw_file, filter_dict):
       if incident in filter_dict.keys():
         filter_dict[incident] += 1
         new_features.append(feature)
+  return new_features
 
-filename = "../POSTFIRE_MASTER_DATA.geojson"
-select_features = read_file(filename, select_incidents)
+raw_filename = "../POSTFIRE_MASTER_DATA.geojson"
+select_features = read_file(raw_filename, select_incidents)
 
