@@ -3,7 +3,7 @@ import ijson
 import geopandas as gpd
 
 '''
-helper function that creates a dictionary from a list
+helper function that returns a dictionary from a list
 '''
 def create_dict(list):
   new_dict = {}
@@ -14,6 +14,10 @@ def create_dict(list):
 select_incidents_list = ["palisades", "mountain", "eaton", "franklin", "line", "bridge"]
 select_incidents = create_dict(select_incidents_list)
 
+'''
+function that takes in a .geojson file and returns a list of filtered features given a dictionary
+also updates the counts
+'''
 def read_file(raw_file, filter_dict):
   new_features = []
   with open(raw_file, 'rb') as f:
@@ -29,6 +33,4 @@ def read_file(raw_file, filter_dict):
 
 filename = "../POSTFIRE_MASTER_DATA.geojson"
 select_features = read_file(filename, select_incidents)
-
-print(select_incidents)
 
