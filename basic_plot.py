@@ -29,7 +29,25 @@ def show_specific_fire(fire_name):
   print(len(fire_gdf))
   
   plt.draw()
+
+buttons = []
 fires_list = ["palisades", "mountain", "eaton", "franklin", "line", "bridge"]
+nf = len(fires_list)
+
+def make_button(fire_index):
+  fire_name = fires_list[fire_index]
+  
+  width = (1-(0.2+0.05*(nf-1)))/nf
+  button_space = plt.axes([0.1+(width+0.05)*fire_index, 0.05, width, 0.05]) # left, bottom, width, height
+  fire_btn = Button(button_space, fire_name)
+  fire_btn.on_clicked(lambda event: show_specific_fire(fire_name))
+
+  buttons.append(fire_btn)
+
+for i in range(len(fires_list)):
+  make_button(i)
+
 show_specific_fire(fires_list[0])
+
 ax.set_title("california fire")
 plt.show()
