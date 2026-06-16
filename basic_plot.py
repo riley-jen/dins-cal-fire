@@ -47,8 +47,9 @@ nf = len(fires_list)
 def make_button(fire_index):
   fire_name = fires_list[fire_index]
   
-  width = (1-(0.2+0.05*(nf-1)))/nf
-  button_space = plt.axes([0.1+(width+0.05)*fire_index, 0.05, width, 0.05]) # left, bottom, width, height
+  space = 0.025
+  width = (1-(0.2+space*(nf-1)))/nf
+  button_space = plt.axes([0.1+(width+space)*fire_index, 0.05, width, 0.05]) # left, bottom, width, height
   fire_btn = Button(button_space, fire_name)
   fire_btn.on_clicked(lambda event: show_specific_fire(fire_name))
 
