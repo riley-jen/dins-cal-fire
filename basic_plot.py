@@ -34,6 +34,7 @@ def show_specific_fire(fire_name):
     if len(damage_gdf) > 0:
       damage_gdf.plot(ax=ax, categorical=True, markersize=2, label=damage, color=color, alpha=0.8, zorder=2)
   ctx.add_basemap(ax, source=ctx.providers.OpenStreetMap.Mapnik, zorder=1)
+  make_legend()
 
   print(len(fire_gdf))
   
@@ -55,6 +56,20 @@ def make_button(fire_index):
 
 for i in range(len(fires_list)):
   make_button(i)
+
+def make_legend():
+  handles, labels = ax.get_legend_handles_labels()
+  legend_lookup = dict(zip([label.lower() for label in labels], handles))
+
+  sorted_handles = []
+  sorted_labels = []
+  
+  for damage in damage_list:
+    if damage in labels:
+      sorted_labels.append(damage)
+      sorted_handles.append(legend_lookup[damage])
+    
+  ax.legend(sorted_handles, sorted_labels, markerscale=3, title="Damage Rating", loc="upper right", frameon=True, facecolor="white")
 
 
 ax.set_title("california fire")
