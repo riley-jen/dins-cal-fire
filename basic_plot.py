@@ -18,12 +18,21 @@ plt.subplots_adjust(bottom=0.15)
 gdf_base.plot(ax=ax, markersize=15, color="crimson", alpha=0.8, zorder=2)
 ctx.add_basemap(ax, source=ctx.providers.OpenStreetMap.Mapnik, zorder=1)
 
+# --- fire filtering ---
+damage_list = ['no damage', 'affected (>0-10%)', 'minor (10-25%)', 'major (25-50%)', 'destroyed (>50%)', 'inaccessible']
+color_code = ['green', 'yellow', 'orange', 'red', 'black', 'gray']
+color_dict = dict(zip(damage_list, color_code))
+
+# draw plot
 def show_specific_fire(fire_name):
   ax.clear()
-
   fire_gdf = gdf_base[(gdf_base['INCIDENTNAME'].str.lower()) == fire_name]
-    
-  fire_gdf.plot(ax=ax, markersize=15, color="crimson", alpha=0.8, zorder=2)
+  
+  for damage, color in color_dict.items():
+    damage_gdf = fire_gdf[(fire_gdf['DAMAGE'].str.lower()) == damage]
+
+    if len(damage_gdf) > 0:
+      damage_gdf.plot(ax=ax, categorical=True, markersize=2, label=damage, color=color, alpha=0.8, zorder=2)
   ctx.add_basemap(ax, source=ctx.providers.OpenStreetMap.Mapnik, zorder=1)
 
   print(len(fire_gdf))
@@ -47,7 +56,6 @@ def make_button(fire_index):
 for i in range(len(fires_list)):
   make_button(i)
 
-show_specific_fire(fires_list[0])
 
 ax.set_title("california fire")
 plt.show()
