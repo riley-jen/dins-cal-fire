@@ -1,6 +1,6 @@
 import geopandas as gpd
-from matplotlib.widgets import Button
 import matplotlib.pyplot as plt
+from matplotlib.widgets import Button
 import contextily as ctx
 
 # prep
@@ -15,8 +15,8 @@ fig, ax = plt.subplots(figsize=(8, 8))
 plt.subplots_adjust(bottom=0.15)
 
 # draw default layers
-gdf_base.plot(ax=ax, markersize=15, color="crimson", alpha=0.8, zorder=2)
-ctx.add_basemap(ax, source=ctx.providers.OpenStreetMap.Mapnik, zorder=1)
+# gdf_base.plot(ax=ax, markersize=15, color="crimson", alpha=0.8, zorder=2)
+# ctx.add_basemap(ax, source=ctx.providers.OpenStreetMap.Mapnik, zorder=1)
 
 # --- fire filtering ---
 damage_list = ['no damage', 'affected (>0-10%)', 'minor (10-25%)', 'major (25-50%)', 'destroyed (>50%)', 'inaccessible']
@@ -36,14 +36,14 @@ def show_specific_fire(fire_name):
   ctx.add_basemap(ax, source=ctx.providers.OpenStreetMap.Mapnik, zorder=1)
   make_legend()
 
-  print(len(fire_gdf))
-  
+  ax.set_title("california fire")
   plt.draw()
 
 buttons = []
 fires_list = ["palisades", "mountain", "eaton", "franklin", "line", "bridge"]
 nf = len(fires_list)
 
+# make buttons
 def make_button(fire_index):
   fire_name = fires_list[fire_index]
   
@@ -58,6 +58,7 @@ def make_button(fire_index):
 for i in range(len(fires_list)):
   make_button(i)
 
+# make legend
 def make_legend():
   handles, labels = ax.get_legend_handles_labels()
   legend_lookup = dict(zip([label.lower() for label in labels], handles))
@@ -71,7 +72,7 @@ def make_legend():
       sorted_handles.append(legend_lookup[damage])
     
   ax.legend(sorted_handles, sorted_labels, markerscale=3, title="Damage Rating", loc="upper right", frameon=True, facecolor="white")
-
+# ------
 
 ax.set_title("california fire")
 plt.show()
