@@ -10,9 +10,7 @@ gdf = gpd.read_file(filename)
 gdf = gdf.set_crs("EPSG:3310", allow_override=True)
 gdf_base = gdf.to_crs(epsg=3857)
 
-# visuals
 fig, ax = plt.subplots(figsize=(8, 8))
-plt.subplots_adjust(bottom=0.15)
 
 # draw default layers
 # gdf_base.plot(ax=ax, markersize=15, color="crimson", alpha=0.8, zorder=2)
@@ -28,35 +26,17 @@ def show_specific_fire(fire_name):
   ax.clear()
   fire_gdf = gdf_base[(gdf_base['INCIDENTNAME'].str.lower()) == fire_name]
   
+  # plot each color of points separately
   for damage, color in color_dict.items():
     damage_gdf = fire_gdf[(fire_gdf['DAMAGE'].str.lower()) == damage]
 
     if len(damage_gdf) > 0:
       damage_gdf.plot(ax=ax, categorical=True, markersize=2, label=damage, color=color, alpha=0.8, zorder=2)
   ctx.add_basemap(ax, source=ctx.providers.OpenStreetMap.Mapnik, zorder=1)
-  make_legend()
-
-  other_features()
-  plt.draw()
-
-buttons = []
-fires_list = ["palisades", "mountain", "eaton", "franklin", "line", "bridge"]
-nf = len(fires_list)
-
-# make buttons
-def make_button(fire_index):
-  fire_name = fires_list[fire_index]
   
-  space = 0.025
-  width = (1-(0.2+space*(nf-1)))/nf
-  button_space = plt.axes([0.1+(width+space)*fire_index, 0.05, width, 0.05]) # left, bottom, width, height
-  fire_btn = Button(button_space, fire_name)
-  fire_btn.on_clicked(lambda event: show_specific_fire(fire_name))
-
-  buttons.append(fire_btn)
-
-for i in range(len(fires_list)):
-  make_button(i)
+  make_legend()
+  apply_base_features()
+  plt.draw()
 
 # make legend
 def make_legend():
@@ -72,12 +52,33 @@ def make_legend():
       sorted_handles.append(legend_lookup[damage])
     
   ax.legend(sorted_handles, sorted_labels, markerscale=3, title="Damage Rating", loc="upper right", frameon=True, facecolor="white")
+
+buttons = []
+fires_list = ["palisades", "mountain", "eaton", "franklin", "line", "bridge"]
+nf = len(fires_list) # number of fires
+
+# make buttons
+def make_button(fire_index):
+  fire_name = fires_list[fire_index]
+  
+  space = 0.025
+  width = (1-(0.2+space*(nf-1)))/nf
+  button_space = plt.axes([0.1+(width+space)*fire_index, 0.05, width, 0.05]) # left, bottom, width, height
+  fire_btn = Button(button_space, fire_name)
+  fire_btn.on_clicked(lambda event: show_specific_fire(fire_name))
+
+  buttons.append(fire_btn)
+
+for i in range(len(fires_list)):
+  make_button(i)
 # ------
 
-def other_features():
+# set basic features 
+def apply_base_features():
+  plt.subplots_adjust(bottom=0.15)
   ax.set_title("california fire")
   ax.get_xaxis().set_visible(False)
   ax.get_yaxis().set_visible(False)
 
-other_features()
+apply_base_features()
 plt.show()
