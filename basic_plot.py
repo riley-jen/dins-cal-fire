@@ -10,7 +10,9 @@ gdf = gpd.read_file(filename)
 gdf = gdf.set_crs("EPSG:3310", allow_override=True)
 gdf_base = gdf.to_crs(epsg=3857)
 
+# set basic features for the window
 fig, ax = plt.subplots(figsize=(8, 8))
+plt.subplots_adjust(bottom=0.15)
 
 # draw default layers
 # gdf_base.plot(ax=ax, markersize=15, color="crimson", alpha=0.8, zorder=2)
@@ -73,9 +75,8 @@ for i in range(len(fires_list)):
   make_button(i)
 # ------
 
-# set basic features 
+# set basic features for the plot
 def apply_base_features():
-  plt.subplots_adjust(bottom=0.15)
   ax.set_title("california fire")
   ax.get_xaxis().set_visible(False)
   ax.get_yaxis().set_visible(False)
