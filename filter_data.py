@@ -61,5 +61,5 @@ def write_file(new_file, features):
   with open(new_file, "w") as f:
     json.dump(new_geojson, f, indent = 2, default=decimal_encoder)
 
-clean_filename = "./POSTFIRE_CLEAN_DATA.geojson"
+clean_filename = "./POSTFIRE_FILTERED_DATA.geojson"
 write_file(clean_filename, select_features)
