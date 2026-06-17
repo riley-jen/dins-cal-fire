@@ -9,6 +9,7 @@ not to be confused with filter_data.py
 from datetime import datetime
 import geopandas as gpd
 
+# set up
 filtered_filename = "POSTFIRE_FILTERED_DATA.geojson"
 gdf = gpd.read_file(filtered_filename)
 
@@ -21,6 +22,11 @@ incident_start_dates = [
   ("bridge", datetime(2024, 9, 8))    # Bridge Fire (Ignited Sept 8, 2024)
 ]
 
+# --- helper functions ---
+
+'''
+turns string from cal fire incident start time data to datetime object
+'''
 def get_date(string):
   string = str(string)
   months = ['jan', 'feb', 'mar', 'apr', 'may', 'jun', 'jul', 'aug', 'sep', 'oct', 'nov', 'dec']
@@ -32,9 +38,19 @@ def get_date(string):
 
   return datetime(year, month, day)
 
+'''
+checks if dates from a geopandas datetime series and another datetime are 
+  within a week apart
+'''
 def is_close(series_date, date2):
   return abs((series_date - date2).dt.days) <= 7
+# ------
 
+'''
+takes in a filtered gdf and returns a gdf cleaned by time
+where cleaned by time means each structure included has INCIDENTSTARTDATE 
+  within 7 days of the official start day for that fire
+'''
 def clean_by_time(gdf):
   gdf_list = []
   for incident, time in incident_start_dates:
@@ -56,6 +72,9 @@ clean_gdf.to_file(clean_filename, "GEOJSON")
 
 
 # ----- ARCHIVE -----
+'''
+returns a list of all unique timestamps for each fire incident
+'''
 def get_data_timestamps(gdf):
   timestamps = []
 
@@ -69,5 +88,3 @@ def get_data_timestamps(gdf):
       timestamps.append(ts)
 
   return timestamps
-
-print(get_data_timestamps(gdf))
