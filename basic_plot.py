@@ -36,7 +36,7 @@ def show_specific_fire(fire_name):
   ctx.add_basemap(ax, source=ctx.providers.OpenStreetMap.Mapnik, zorder=1)
   make_legend()
 
-  ax.set_title("california fire")
+  other_features()
   plt.draw()
 
 buttons = []
@@ -74,5 +74,10 @@ def make_legend():
   ax.legend(sorted_handles, sorted_labels, markerscale=3, title="Damage Rating", loc="upper right", frameon=True, facecolor="white")
 # ------
 
-ax.set_title("california fire")
+def other_features():
+  ax.set_title("california fire")
+  ax.get_xaxis().set_visible(False)
+  ax.get_yaxis().set_visible(False)
+
+other_features()
 plt.show()
