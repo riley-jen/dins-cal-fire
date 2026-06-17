@@ -34,6 +34,27 @@ def get_date(string):
 
 def is_close(series_date, date2):
   return abs((series_date - date2).dt.days) <= 7
+
+def clean_by_time(gdf):
+  gdf_list = []
+  for incident, time in incident_start_dates:
+    fire_gdf = gdf[gdf['INCIDENTNAME'].str.lower() == incident]
+
+    converted_dates = fire_gdf['INCIDENTSTARTDATE'].astype(str).apply(get_date)
+    time_gdf = fire_gdf[is_close(converted_dates, time)]
+
+    gdf_list.append(time_gdf)
+  
+  return gpd.pd.concat(gdf_list, ignore_index=True)
+
+
+# --- file writing ---
+clean_filename = "POSTFIRE_CLEAN_DATA.geojson"
+clean_gdf = clean_by_time(gdf)
+
+clean_gdf.to_file(clean_filename, "GEOJSON")
+
+
 # ----- ARCHIVE -----
 def get_data_timestamps(gdf):
   timestamps = []
