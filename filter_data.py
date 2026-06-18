@@ -35,7 +35,7 @@ def read_file(raw_file, filter_dict):
       properties = feature.get('properties',{})
       incident = properties.get("INCIDENTNAME",'').lower()
 
-      if incident == None:
+      if incident == '':
         filter_dict["unspecified"] += 1
       if incident in filter_dict.keys():
         filter_dict[incident] += 1
