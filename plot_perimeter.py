@@ -10,9 +10,9 @@ gdf = gpd.read_file(filename)
 gdf = gdf.set_crs("EPSG:4326", allow_override=True)
 gdf_base = gdf.to_crs(epsg=3857)
 
-# set basic features for the window
-fig, ax = plt.subplots(figsize=(8, 8))
-plt.subplots_adjust(bottom=0.15)
+# # set basic features for the window
+# fig, ax = plt.subplots(figsize=(8, 8))
+# plt.subplots_adjust(bottom=0.15)
 
 # --- fire filtering ---
 
@@ -23,7 +23,7 @@ def show_fire_perimeter(ax, fire_name):
   
   fire_gdf.plot(ax=ax, categorical=True, markersize=2, color="blue", alpha=0.8, zorder=3)
   
-  plt.draw()
+  # plt.draw()
 
 # show_fire_perimeter(ax, "eaton")
 # ax.set_aspect("equal")
