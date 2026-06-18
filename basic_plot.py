@@ -2,6 +2,7 @@ import geopandas as gpd
 import matplotlib.pyplot as plt
 from matplotlib.widgets import Button
 import contextily as ctx
+from plot_perimeter import show_fire_perimeter
 
 # prep
 filename = "./POSTFIRE_CLEAN_DATA.geojson"
@@ -27,6 +28,8 @@ color_dict = dict(zip(damage_list, color_code))
 def show_specific_fire(fire_name):
   ax.clear()
   fire_gdf = gdf_base[(gdf_base['INCIDENTNAME'].str.lower()) == fire_name]
+
+  # show_fire_perimeter(ax, fire_name)
   
   # plot each color of points separately
   for damage, color in color_dict.items():
