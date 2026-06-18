@@ -3,7 +3,7 @@ import ijson
 import geopandas as gpd
 from shapely.geometry import shape
 
-fires_list = ["palisades", "mountain", "eaton", "franklin", "line", "bridge", "unspecified"]
+fires_list = ['palisades', 'mountain', 'eaton', 'franklin', 'line', 'bridge', 'unspecified']
 fires_perimeter_count = dict.fromkeys(fires_list, 0)
 
 '''
@@ -17,13 +17,13 @@ def read_file(raw_file, filter_dict):
 
     for feature in features:
       properties = feature.get('properties',{})
-      incident = properties.get("poly_IncidentName","") or ""
+      incident = properties.get('poly_IncidentName','') or ''
       incident = incident.lower()
       geometry = feature.get('geometry')
 
 
       if incident == '':
-        filter_dict["unspecified"] += 1
+        filter_dict['unspecified'] += 1
       if incident in filter_dict.keys():
         filter_dict[incident] += 1
         row_data = properties.copy()
@@ -33,17 +33,17 @@ def read_file(raw_file, filter_dict):
 
   return new_features
 
-raw_filename = "../WFIGS_INTERAGENCY_PERIMETERS_MASTER_DATA.geojson"
+raw_filename = '../WFIGS_INTERAGENCY_PERIMETERS_MASTER_DATA.geojson'
 select_features = read_file(raw_filename, fires_perimeter_count)
 print(fires_perimeter_count)
-# assert (fires_perimeter_count["unspecified"] == 0), "unspecified incidents present!"
+# assert (fires_perimeter_count['unspecified'] == 0), 'unspecified incidents present!'
 
 '''
 writes new .geojson file given a list of features
 '''
 def write_file(new_file, features):
-  gdf = gpd.GeoDataFrame(features, crs="EPSG:4326")
-  gdf.to_file(clean_filename, "GEOJSON")
+  gdf = gpd.GeoDataFrame(features, crs='EPSG:4326')
+  gdf.to_file(clean_filename, 'GEOJSON')
 
-clean_filename = "./WFIGS_INTERAGENCY_PERIMETERS_FILTERED_DATA.geojson"
+clean_filename = './WFIGS_INTERAGENCY_PERIMETERS_FILTERED_DATA.geojson'
 write_file(clean_filename, select_features)
