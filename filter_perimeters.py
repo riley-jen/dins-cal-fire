@@ -1,7 +1,7 @@
 import json
 import ijson
 import geopandas as gpd
-from decimal import Decimal
+from shapely.geometry import shape
 
 fires_list = ["palisades", "mountain", "eaton", "franklin", "line", "bridge", "unspecified"]
 fires_perimeter_count = dict.fromkeys(fires_list, 0)
@@ -17,40 +17,33 @@ def read_file(raw_file, filter_dict):
 
     for feature in features:
       properties = feature.get('properties',{})
-      incident = properties.get("INCIDENTNAME",'').lower()
+      incident = properties.get("poly_IncidentName","") or ""
+      incident = incident.lower()
+      geometry = feature.get('geometry')
 
-      if incident == None:
+
+      if incident == '':
         filter_dict["unspecified"] += 1
       if incident in filter_dict.keys():
         filter_dict[incident] += 1
-        new_features.append(feature)
+        row_data = properties.copy()
+        row_data['geometry'] = shape(geometry)
+
+        new_features.append(row_data)
 
   return new_features
 
-raw_filename = "../POSTFIRE_MASTER_DATA.geojson"
-select_features = read_file(raw_filename, select_incidents)
-
-assert (select_incidents["unspecified"] == 0), "unspecified incidents present!"
-
-'''
-handles json not being able to serialize decmials... hopefully
-'''
-def decimal_encoder(obj):
-  if isinstance(obj, Decimal):
-    return float(obj)
-  return obj
+raw_filename = "../WFIGS_INTERAGENCY_PERIMETERS_MASTER_DATA.geojson"
+select_features = read_file(raw_filename, fires_perimeter_count)
+print(fires_perimeter_count)
+# assert (fires_perimeter_count["unspecified"] == 0), "unspecified incidents present!"
 
 '''
 writes new .geojson file given a list of features
 '''
 def write_file(new_file, features):
-  new_geojson = {
-    "type": "FeatureCollection",
-    "features": features
-  }
+  gdf = gpd.GeoDataFrame(features, crs="EPSG:4326")
+  gdf.to_file(clean_filename, "GEOJSON")
 
-  with open(new_file, "w") as f:
-    json.dump(new_geojson, f, indent = 2, default=decimal_encoder)
-
-clean_filename = "./POSTFIRE_FILTERED_DATA.geojson"
+clean_filename = "./WFIGS_INTERAGENCY_PERIMETERS_FILTERED_DATA.geojson"
 write_file(clean_filename, select_features)
