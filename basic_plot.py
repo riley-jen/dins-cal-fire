@@ -5,10 +5,10 @@ import contextily as ctx
 from plot_perimeter import show_fire_perimeter
 
 # prep
-filename = "./POSTFIRE_CLEAN_DATA.geojson"
+filename = './POSTFIRE_CLEAN_DATA.geojson'
 gdf = gpd.read_file(filename)
 
-gdf = gdf.set_crs("EPSG:3310", allow_override=True)
+gdf = gdf.set_crs('EPSG:3310', allow_override=True)
 gdf_base = gdf.to_crs(epsg=3857)
 
 # set basic features for the window
@@ -16,7 +16,7 @@ fig, ax = plt.subplots(figsize=(8, 8))
 plt.subplots_adjust(bottom=0.15)
 
 # draw default layers
-# gdf_base.plot(ax=ax, markersize=15, color="crimson", alpha=0.8, zorder=2)
+# gdf_base.plot(ax=ax, markersize=15, color='crimson', alpha=0.8, zorder=2)
 # ctx.add_basemap(ax, source=ctx.providers.OpenStreetMap.Mapnik, zorder=1)
 
 # --- fire filtering ---
@@ -56,10 +56,10 @@ def make_legend():
       sorted_labels.append(damage)
       sorted_handles.append(legend_lookup[damage])
     
-  ax.legend(sorted_handles, sorted_labels, markerscale=3, title="Damage Rating", loc="upper right", frameon=True, facecolor="white")
+  ax.legend(sorted_handles, sorted_labels, markerscale=3, title='Damage Rating', loc='upper right', frameon=True, facecolor='white')
 
 buttons = []
-fires_list = ["palisades", "mountain", "eaton", "franklin", "line", "bridge"]
+fires_list = ['palisades', 'mountain', 'eaton', 'franklin', 'line', 'bridge']
 nf = len(fires_list) # number of fires
 
 # make buttons
@@ -80,7 +80,7 @@ for i in range(len(fires_list)):
 
 # set basic features for the plot
 def apply_base_features():
-  ax.set_title("california fire")
+  ax.set_title('california fire')
   ax.get_xaxis().set_visible(False)
   ax.get_yaxis().set_visible(False)
 

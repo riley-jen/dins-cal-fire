@@ -19,7 +19,7 @@ def create_dict(list):
     new_dict[item] = 0
   return new_dict
 
-select_incidents_list = ["palisades", "mountain", "eaton", "franklin", "line", "bridge", "unspecified"]
+select_incidents_list = ['palisades', 'mountain', 'eaton', 'franklin', 'line', 'bridge', 'unspecified']
 select_incidents = create_dict(select_incidents_list)
 
 '''
@@ -33,20 +33,20 @@ def read_file(raw_file, filter_dict):
 
     for feature in features:
       properties = feature.get('properties',{})
-      incident = properties.get("INCIDENTNAME",'').lower()
+      incident = properties.get('INCIDENTNAME','').lower()
 
       if incident == '':
-        filter_dict["unspecified"] += 1
+        filter_dict['unspecified'] += 1
       if incident in filter_dict.keys():
         filter_dict[incident] += 1
         new_features.append(feature)
 
   return new_features
 
-raw_filename = "../POSTFIRE_MASTER_DATA.geojson"
+raw_filename = '../POSTFIRE_MASTER_DATA.geojson'
 select_features = read_file(raw_filename, select_incidents)
 
-assert (select_incidents["unspecified"] == 0), "unspecified incidents present!"
+assert (select_incidents['unspecified'] == 0), 'unspecified incidents present!'
 
 '''
 handles json not being able to serialize decmials... hopefully
@@ -61,12 +61,12 @@ writes new .geojson file given a list of features
 '''
 def write_file(new_file, features):
   new_geojson = {
-    "type": "FeatureCollection",
-    "features": features
+    'type': 'FeatureCollection',
+    'features': features
   }
 
-  with open(new_file, "w") as f:
+  with open(new_file, 'w') as f:
     json.dump(new_geojson, f, indent = 2, default=decimal_encoder)
 
-clean_filename = "./POSTFIRE_FILTERED_DATA.geojson"
+clean_filename = './POSTFIRE_FILTERED_DATA.geojson'
 write_file(clean_filename, select_features)
