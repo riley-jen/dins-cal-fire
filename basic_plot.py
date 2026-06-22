@@ -2,7 +2,7 @@ import geopandas as gpd
 import matplotlib.pyplot as plt
 from matplotlib.widgets import Button
 import contextily as ctx
-from plot_perimeter import show_fire_perimeter
+from plot_perimeter import show_fire_perimeter, make_perimeter_buttons
 
 # prep
 filename = './POSTFIRE_CLEAN_DATA.geojson'
@@ -19,6 +19,8 @@ plt.subplots_adjust(bottom=0.15)
 # gdf_base.plot(ax=ax, markersize=15, color='crimson', alpha=0.8, zorder=2)
 # ctx.add_basemap(ax, source=ctx.providers.OpenStreetMap.Mapnik, zorder=1)
 
+values = {"index":0}
+
 # --- fire filtering ---
 damage_list = ['no damage', 'affected (>0-10%)', 'minor (10-25%)', 'major (25-50%)', 'destroyed (>50%)', 'inaccessible']
 color_code = ['green', 'yellow', 'orange', 'red', 'black', 'gray']
@@ -28,8 +30,9 @@ color_dict = dict(zip(damage_list, color_code))
 def show_specific_fire(fire_name):
   ax.clear()
   fire_gdf = gdf_base[(gdf_base['INCIDENTNAME'].str.lower()) == fire_name]
+  i = values["index"]
 
-  # show_fire_perimeter(ax, fire_name)
+  show_fire_perimeter(ax, fire_name, i)
   
   # plot each color of points separately
   for damage, color in color_dict.items():
@@ -76,6 +79,8 @@ def make_button(fire_index):
 
 for i in range(len(fires_list)):
   make_button(i)
+
+make_perimeter_buttons(values, buttons)
 # ------
 
 # set basic features for the plot

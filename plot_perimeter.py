@@ -17,14 +17,35 @@ gdf_base = gdf.to_crs(epsg=3857)
 # --- fire filtering ---
 
 # draw plot
-def show_fire_perimeter(ax, fire_name):
+def show_fire_perimeter(ax, fire_name, index):
   fire_gdf = gdf_base[(gdf_base['poly_IncidentName'].str.lower()) == fire_name]
-  # fire_gdf = fire_gdf.head(1)
+  fire_gdf = fire_gdf.iloc[[index]]
   
   fire_gdf.plot(ax=ax, categorical=True, markersize=2, color='blue', alpha=0.8, zorder=3)
   
   # plt.draw()
 
-# show_fire_perimeter(ax, 'eaton')
+def make_perimeter_buttons(dict, buttons):
+  
+  up_button_space = plt.axes([0.1, 0.15, 0.3, 0.05]) # left, bottom, width, height
+  up_button = Button(up_button_space, '^')
+  up_button.on_clicked(lambda event: change_index('up', dict))
+
+
+  down_button_space = plt.axes([0.6, 0.15, 0.3, 0.05]) # left, bottom, width, height
+  down_button = Button(down_button_space, 'v')
+  down_button.on_clicked(lambda event: change_index('down', dict))
+
+  buttons.append(up_button)
+  buttons.append(down_button)
+
+def change_index(direction, dict):
+  global index
+  if direction == 'up':
+    dict['index'] += 1
+  else:
+    dict['index'] -= 1
+  print(dict['index'])
+
 # ax.set_aspect('equal')
 # plt.show()
