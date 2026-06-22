@@ -46,5 +46,5 @@ def write_file(new_file, features):
   gdf = gpd.GeoDataFrame(features, crs='EPSG:4326')
   gdf.to_file(clean_filename, 'GEOJSON')
 
-clean_filename = 'WFIGS_INTERAGENCY_PERIMETERS_FILTERED_DATA.geojson'
+clean_filename = '../files/WFIGS_INTERAGENCY_PERIMETERS_FILTERED_DATA.geojson'
 write_file(clean_filename, select_features)

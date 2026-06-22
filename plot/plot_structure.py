@@ -3,7 +3,7 @@ import matplotlib.pyplot as plt
 from matplotlib.widgets import Button
 
 # prep
-filename = './POSTFIRE_CLEAN_DATA.geojson'
+filename = '../files/POSTFIRE_CLEAN_DATA.geojson'
 gdf = gpd.read_file(filename)
 
 gdf = gdf.set_crs('EPSG:3310', allow_override=True)

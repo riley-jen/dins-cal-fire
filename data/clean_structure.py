@@ -10,7 +10,7 @@ from datetime import datetime
 import geopandas as gpd
 
 # set up
-filtered_filename = 'POSTFIRE_FILTERED_DATA.geojson'
+filtered_filename = '../files/POSTFIRE_FILTERED_DATA.geojson'
 gdf = gpd.read_file(filtered_filename)
 
 incident_start_dates = [
@@ -65,10 +65,10 @@ def clean_by_time(gdf):
 
 
 # --- file writing ---
-clean_filename = 'POSTFIRE_CLEAN_DATA.geojson'
+clean_filename = '../files/POSTFIRE_CLEAN_DATA.geojson'
 clean_gdf = clean_by_time(gdf)
 
-clean_gdf.to_file(clean_filename, 'GEOJSON')
+# clean_gdf.to_file(clean_filename, 'GEOJSON')
 
 
 # ----- ARCHIVE -----
