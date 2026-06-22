@@ -30,7 +30,7 @@ def show_fire_perimeter(ax, fire_name, index):
   # fire_gdf = fire_gdf.iloc[[index]]
   fire_gdf = fire_gdf.iloc[[perimeter_index[fire_name]]]
   
-  fire_gdf.plot(ax=ax, categorical=True, markersize=2, color='blue', alpha=0.8, zorder=3)
+  fire_gdf.plot(ax=ax, categorical=True, markersize=2, color='blue', alpha=0.3, zorder=3)
   
   # plt.draw()
 

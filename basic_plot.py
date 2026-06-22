@@ -43,7 +43,7 @@ def show_specific_fire(fire_name):
   ctx.add_basemap(ax, source=ctx.providers.OpenStreetMap.Mapnik, zorder=1)
   
   make_legend()
-  apply_base_features()
+  apply_base_features(fire_name)
   plt.draw()
 
 # make legend
@@ -84,8 +84,11 @@ for i in range(len(fires_list)):
 # ------
 
 # set basic features for the plot
-def apply_base_features():
-  ax.set_title('california fire')
+def apply_base_features(fire_name = ""):
+  if fire_name != "":
+    ax.set_title('california fire: ' + fire_name)
+  else:
+    ax.set_title('california fire')
   ax.get_xaxis().set_visible(False)
   ax.get_yaxis().set_visible(False)
 
