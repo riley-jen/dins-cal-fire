@@ -15,12 +15,6 @@ gdf_base = gdf.to_crs(epsg=3857)
 fig, ax = plt.subplots(figsize=(8, 8))
 plt.subplots_adjust(bottom=0.15)
 
-# draw default layers
-# gdf_base.plot(ax=ax, markersize=15, color='crimson', alpha=0.8, zorder=2)
-# ctx.add_basemap(ax, source=ctx.providers.OpenStreetMap.Mapnik, zorder=1)
-
-values = {"index":0}
-
 # --- fire filtering ---
 damage_list = ['no damage', 'affected (>0-10%)', 'minor (10-25%)', 'major (25-50%)', 'destroyed (>50%)', 'inaccessible']
 color_code = ['green', 'yellow', 'orange', 'red', 'black', 'gray']
@@ -30,9 +24,8 @@ color_dict = dict(zip(damage_list, color_code))
 def show_specific_fire(fire_name):
   ax.clear()
   fire_gdf = gdf_base[(gdf_base['INCIDENTNAME'].str.lower()) == fire_name]
-  i = values["index"]
 
-  show_fire_perimeter(ax, fire_name, i)
+  show_fire_perimeter(ax, fire_name)
   
   # plot each color of points separately
   for damage, color in color_dict.items():
@@ -80,7 +73,6 @@ def make_button(fire_index):
 for i in range(len(fires_list)):
   make_button(i)
 
-# make_perimeter_buttons(values, buttons)
 # ------
 
 # set basic features for the plot
