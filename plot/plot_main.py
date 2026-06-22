@@ -17,7 +17,6 @@ fires_list = ['palisades', 'mountain', 'eaton', 'franklin', 'line', 'bridge']
 # draw plot
 def plot_fire(fire_name):
   ax.clear()
-  print(fire_name)
 
   show_fire_structure(ax, fire_name) # zorder 3
   show_fire_perimeter(ax, fire_name) # zorder 2
@@ -32,7 +31,6 @@ def make_fire_buttons(buttons, fires_list):
 
   for i in range(len(fires_list)):
     fire_name = fires_list[i]
-    print(fire_name)
     
     space = 0.025
     width = (1-(0.2+space*(nf-1)))/nf
