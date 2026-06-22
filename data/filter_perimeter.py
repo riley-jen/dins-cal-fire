@@ -33,9 +33,10 @@ def read_file(raw_file, filter_dict):
 
   return new_features
 
-raw_filename = '../WFIGS_INTERAGENCY_PERIMETERS_MASTER_DATA.geojson'
+raw_filename = '../../WFIGS_INTERAGENCY_PERIMETERS_MASTER_DATA.geojson'
 select_features = read_file(raw_filename, fires_perimeter_count)
-print(fires_perimeter_count)
+
+# print(fires_perimeter_count)
 # assert (fires_perimeter_count['unspecified'] == 0), 'unspecified incidents present!'
 
 '''
@@ -45,5 +46,5 @@ def write_file(new_file, features):
   gdf = gpd.GeoDataFrame(features, crs='EPSG:4326')
   gdf.to_file(clean_filename, 'GEOJSON')
 
-clean_filename = './WFIGS_INTERAGENCY_PERIMETERS_FILTERED_DATA.geojson'
+clean_filename = 'WFIGS_INTERAGENCY_PERIMETERS_FILTERED_DATA.geojson'
 write_file(clean_filename, select_features)

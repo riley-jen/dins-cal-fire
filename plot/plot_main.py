@@ -3,8 +3,8 @@ import matplotlib.pyplot as plt
 from matplotlib.widgets import Button
 import contextily as ctx
 
-from plot_structure import show_fire_structure
-from plot_perimeter import show_fire_perimeter, make_perimeter_buttons
+from plot.plot_structure import show_fire_structure
+from plot.plot_perimeter import show_fire_perimeter, make_perimeter_buttons
 
 
 # set basic features for the window
