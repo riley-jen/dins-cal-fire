@@ -15,11 +15,20 @@ gdf_base = gdf.to_crs(epsg=3857)
 # plt.subplots_adjust(bottom=0.15)
 
 # --- fire filtering ---
+perimeter_index = {
+  'palisades': 4,
+  'mountain': 5,
+  'eaton': 1, 
+  'franklin': 1,
+  'line': 5, 
+  'bridge': 10
+}
 
 # draw plot
 def show_fire_perimeter(ax, fire_name, index):
   fire_gdf = gdf_base[(gdf_base['poly_IncidentName'].str.lower()) == fire_name]
-  fire_gdf = fire_gdf.iloc[[index]]
+  # fire_gdf = fire_gdf.iloc[[index]]
+  fire_gdf = fire_gdf.iloc[[perimeter_index[fire_name]]]
   
   fire_gdf.plot(ax=ax, categorical=True, markersize=2, color='blue', alpha=0.8, zorder=3)
   

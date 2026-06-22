@@ -80,7 +80,7 @@ def make_button(fire_index):
 for i in range(len(fires_list)):
   make_button(i)
 
-make_perimeter_buttons(values, buttons)
+# make_perimeter_buttons(values, buttons)
 # ------
 
 # set basic features for the plot
