@@ -22,6 +22,7 @@ def plot_fire(fire_name):
 
   show_fire_structure(ax, fire_name) # zorder 3
   show_fire_perimeter(ax, fire_name) # zorder 2
+  fit_map_bounds(ax)
   ctx.add_basemap(ax, source=ctx.providers.OpenStreetMap.Mapnik, zorder=1)
   
   apply_base_features(fire_name)
@@ -31,7 +32,23 @@ def plot_fire(fire_name):
 # keep the map in the upper-left part of the fixed-size window
 def set_map_position(ax):
   ax.set_position(map_position)
-  ax.set_aspect('auto')
+  ax.set_aspect('equal', adjustable='box')
+
+# expand the map bounds to fit the fixed rectangular map area without stretching
+def fit_map_bounds(ax):
+  x_min, x_max = ax.get_xlim()
+  y_min, y_max = ax.get_ylim()
+  x_center, y_center = (x_min + x_max) / 2, (y_min + y_max) / 2
+  width, height = x_max - x_min, y_max - y_min
+  target_ratio = map_position[2] / map_position[3]
+
+  if width / height < target_ratio:
+    width = height * target_ratio
+  else:
+    height = width / target_ratio
+
+  ax.set_xlim(x_center - width / 2, x_center + width / 2)
+  ax.set_ylim(y_center - height / 2, y_center + height / 2)
 
 # draw a small scale bar for the current map extent
 def add_scale_bar(ax):
