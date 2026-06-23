@@ -4,7 +4,7 @@ from matplotlib.widgets import Button
 import contextily as ctx
 
 # prep
-filename = './WFIGS_INTERAGENCY_PERIMETERS_FILTERED_DATA.geojson'
+filename = '../files/WFIGS_INTERAGENCY_PERIMETERS_FILTERED_DATA.geojson'
 gdf = gpd.read_file(filename)
 
 gdf = gdf.set_crs('EPSG:4326', allow_override=True)

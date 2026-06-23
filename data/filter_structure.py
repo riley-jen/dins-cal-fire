@@ -43,7 +43,7 @@ def read_file(raw_file, filter_dict):
 
   return new_features
 
-raw_filename = '../POSTFIRE_MASTER_DATA.geojson'
+raw_filename = '../../POSTFIRE_MASTER_DATA.geojson'
 select_features = read_file(raw_filename, select_incidents)
 
 assert (select_incidents['unspecified'] == 0), 'unspecified incidents present!'
@@ -68,5 +68,5 @@ def write_file(new_file, features):
   with open(new_file, 'w') as f:
     json.dump(new_geojson, f, indent = 2, default=decimal_encoder)
 
-clean_filename = './POSTFIRE_FILTERED_DATA.geojson'
+clean_filename = '../files/POSTFIRE_FILTERED_DATA.geojson'
 write_file(clean_filename, select_features)
