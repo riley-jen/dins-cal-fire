@@ -25,6 +25,7 @@ def plot_fire(fire_name):
   ctx.add_basemap(ax, source=ctx.providers.OpenStreetMap.Mapnik, zorder=1)
   
   apply_base_features(fire_name)
+  add_scale_bar(ax)
   plt.draw()
 
 # keep the map in a fixed square in the top left corner
@@ -51,6 +52,59 @@ def set_square_map_extent(ax):
 
   ax.set_xlim(x_center - half_side, x_center + half_side)
   ax.set_ylim(y_center - half_side, y_center + half_side)
+
+# draw a small scale bar for the current map extent
+def add_scale_bar(ax):
+  x_min, x_max = ax.get_xlim()
+  y_min, y_max = ax.get_ylim()
+  map_width = x_max - x_min
+  map_height = y_max - y_min
+  scale_length = get_scale_length(map_width)
+
+  x_start = x_min + map_width * 0.08
+  y_start = y_min + map_height * 0.08
+  x_end = x_start + scale_length
+
+  ax.plot([x_start, x_end], [y_start, y_start], color='black', linewidth=3, zorder=4)
+  ax.text(
+    (x_start + x_end) / 2,
+    y_start + map_height * 0.02,
+    make_scale_label(scale_length),
+    ha='center',
+    va='bottom',
+    color='black',
+    fontsize=9,
+    fontweight='bold',
+    bbox=dict(facecolor='white', edgecolor='none', alpha=0.8, pad=2),
+    zorder=4
+  )
+
+# choose a readable scale length in meters for the map size
+def get_scale_length(map_width):
+  max_scale_length = map_width / 4
+  scale_options = [
+    30.48, 76.2, 152.4, 304.8, 804.672,
+    1609.344, 8046.72, 16093.44, 80467.2
+  ]
+
+  for scale_length in reversed(scale_options):
+    if scale_length <= max_scale_length:
+      return scale_length
+
+  return scale_options[0]
+
+# format the scale length as feet or miles
+def make_scale_label(scale_length):
+  mile = 1609.344
+  foot = 0.3048
+
+  if scale_length >= mile:
+    miles = scale_length / mile
+    return str(int(miles)) + ' mi'
+
+  feet = scale_length / foot
+  return str(int(feet)) + ' ft'
+
 # make buttons
 def make_fire_buttons(buttons, fires_list):
   nf = len(fires_list)
