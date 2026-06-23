@@ -41,4 +41,5 @@ def make_legend(ax):
       sorted_labels.append(damage)
       sorted_handles.append(legend_lookup[damage])
     
-  ax.legend(sorted_handles, sorted_labels, markerscale=3, title='Damage Rating', loc='upper right', frameon=True, facecolor='white')
+  ax.legend(sorted_handles, sorted_labels, markerscale=3, title='Damage Rating', loc='upper right', 
+    bbox_to_anchor=(0.96, 0.95), bbox_transform=ax.figure.transFigure, frameon=True, facecolor='white')
