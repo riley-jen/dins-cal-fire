@@ -17,13 +17,16 @@ fires_list = ['palisades', 'mountain', 'eaton', 'franklin', 'line', 'bridge']
 map_position = [0.06, 0.50, 0.66, 0.44] # left, bottom, width, height
 map_ax = fig.add_axes(map_position)
 
+pie_position = [0.06, 0.15, 0.3, 0.3]
+pie_ax = fig.add_axes(pie_position)
+
 # --- MAIN FUNCTIONS ---
-# draw plot
+# draw plots
 def plot_fire(fire_name):
   map_ax.clear()
   set_map_position(map_ax)
 
-  show_fire_structure(map_ax, fire_name) # zorder 3
+  show_fire_structure(map_ax, pie_ax, fire_name) # zorder 3
   show_fire_perimeter(map_ax, fire_name) # zorder 2
   fit_map_bounds(map_ax)
   ctx.add_basemap(map_ax, source=ctx.providers.OpenStreetMap.Mapnik, zorder=1)
@@ -32,7 +35,7 @@ def plot_fire(fire_name):
   apply_map_base_features(fire_name)
   plt.draw()
 
-# make buttons
+# make buttons for selecting fire
 def make_fire_buttons(buttons, fires_list):
   nf = len(fires_list)
 

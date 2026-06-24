@@ -12,21 +12,28 @@ gdf_base = gdf.to_crs(epsg=3857)
 
 # --- fire filtering ---
 damage_list = ['no damage', 'affected (>0-10%)', 'minor (10-25%)', 'major (25-50%)', 'destroyed (>50%)', 'inaccessible']
+damage_count = dict(zip(damage_list, [0] * len(damage_list)))
+
 color_code = ['green', 'yellow', 'orange', 'red', 'black', 'gray']
 color_dict = dict(zip(damage_list, color_code))
 
-# draw plot
-def show_fire_structure(ax, fire_name):
+# draw map plot
+def show_fire_structure(map_ax, pie_ax, fire_name):
   fire_gdf = gdf_base[(gdf_base['INCIDENTNAME'].str.lower()) == fire_name]
+  total = len(fire_gdf)
   
   # plot each color of points separately
   for damage, color in color_dict.items():
     damage_gdf = fire_gdf[(fire_gdf['DAMAGE'].str.lower()) == damage]
+    damage_count[damage] = len(damage_gdf)
 
     if len(damage_gdf) > 0:
-      damage_gdf.plot(ax=ax, categorical=True, markersize=2, label=damage, color=color, alpha=0.8, zorder=2)
+      damage_gdf.plot(ax=map_ax, categorical=True, markersize=2, label=damage, color=color, alpha=0.8, zorder=2)
 
-  make_legend(ax)
+  make_legend(map_ax)
+
+  # for pie chart
+  pie_ax.pie(damage_count.values(), labels=damage_list, colors=color_code, autopct='%1.1f%%', startangle=90)
 
 # make legend
 def make_legend(ax):
