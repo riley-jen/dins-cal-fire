@@ -9,25 +9,27 @@ from plot_perimeter import show_fire_perimeter, make_perimeter_buttons
 
 
 # set basic features for the window
-fig, ax = plt.subplots(figsize=(8, 8))
+fig = plt.figure(figsize=(8, 8))
 plt.subplots_adjust(bottom=0.15)
 
 fires_list = ['palisades', 'mountain', 'eaton', 'franklin', 'line', 'bridge']
+
 map_position = [0.06, 0.50, 0.66, 0.44] # left, bottom, width, height
+map_ax = fig.add_axes(map_position)
 
 # --- MAIN FUNCTIONS ---
 # draw plot
 def plot_fire(fire_name):
-  ax.clear()
-  set_map_position(ax)
+  map_ax.clear()
+  set_map_position(map_ax)
 
-  show_fire_structure(ax, fire_name) # zorder 3
-  show_fire_perimeter(ax, fire_name) # zorder 2
-  fit_map_bounds(ax)
-  ctx.add_basemap(ax, source=ctx.providers.OpenStreetMap.Mapnik, zorder=1)
+  show_fire_structure(map_ax, fire_name) # zorder 3
+  show_fire_perimeter(map_ax, fire_name) # zorder 2
+  fit_map_bounds(map_ax)
+  ctx.add_basemap(map_ax, source=ctx.providers.OpenStreetMap.Mapnik, zorder=1)
   
-  apply_base_features(fire_name)
-  add_scale_bar(ax)
+  add_scale_bar(map_ax)
+  apply_map_base_features(fire_name)
   plt.draw()
 
 # make buttons
@@ -50,14 +52,13 @@ def make_fire_buttons(buttons, fires_list):
 # --- HELPER FUNCTIONS ---
 
 # set basic features for the plot
-def apply_base_features(fire_name = ""):
-  set_map_position(ax)
+def apply_map_base_features(fire_name = ""):
   if fire_name != "":
-    ax.set_title('california fire: ' + fire_name)
+    map_ax.set_title('california fire: ' + fire_name)
   else:
-    ax.set_title('california fire')
-  ax.get_xaxis().set_visible(False)
-  ax.get_yaxis().set_visible(False)
+    map_ax.set_title('california fire')
+  map_ax.get_xaxis().set_visible(False)
+  map_ax.get_yaxis().set_visible(False)
 
 # keep the map in the upper-left part of the fixed-size window
 def set_map_position(ax):
@@ -104,6 +105,7 @@ def add_scale_bar(ax):
 
 buttons = []
 make_fire_buttons(buttons, fires_list)
+fit_map_bounds(map_ax)
 
-apply_base_features()
+apply_map_base_features()
 plt.show()
