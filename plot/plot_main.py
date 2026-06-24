@@ -17,15 +17,16 @@ fires_list = ['palisades', 'mountain', 'eaton', 'franklin', 'line', 'bridge']
 map_position = [0.06, 0.50, 0.66, 0.44] # left, bottom, width, height
 map_ax = fig.add_axes(map_position)
 
-pie_position = [0.06, 0.15, 0.3, 0.3]
+pie_position = [0.06, 0.15, 0.44, 0.3]
 pie_ax = fig.add_axes(pie_position)
 
 # --- MAIN FUNCTIONS ---
 # draw plots
 def plot_fire(fire_name):
   map_ax.clear()
-  set_map_position(map_ax)
+  pie_ax.clear()
 
+  set_map_position(map_ax)
   show_fire_structure(map_ax, pie_ax, fire_name) # zorder 3
   show_fire_perimeter(map_ax, fire_name) # zorder 2
   fit_map_bounds(map_ax)
@@ -33,6 +34,7 @@ def plot_fire(fire_name):
   
   add_scale_bar(map_ax)
   apply_map_base_features(fire_name)
+  apply_pie_base_features()
   plt.draw()
 
 # make buttons for selecting fire
@@ -62,6 +64,11 @@ def apply_map_base_features(fire_name = ""):
     map_ax.set_title('california fire')
   map_ax.get_xaxis().set_visible(False)
   map_ax.get_yaxis().set_visible(False)
+
+def apply_pie_base_features(fire_name = ""):
+  pie_ax.set_title('damaged structures distribution')
+  pie_ax.get_xaxis().set_visible(False)
+  pie_ax.get_yaxis().set_visible(False)
 
 # keep the map in the upper-left part of the fixed-size window
 def set_map_position(ax):
@@ -111,4 +118,5 @@ make_fire_buttons(buttons, fires_list)
 fit_map_bounds(map_ax)
 
 apply_map_base_features()
+apply_pie_base_features()
 plt.show()

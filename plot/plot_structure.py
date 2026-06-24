@@ -33,7 +33,9 @@ def show_fire_structure(map_ax, pie_ax, fire_name):
   make_legend(map_ax)
 
   # for pie chart
-  pie_ax.pie(damage_count.values(), labels=damage_list, colors=color_code, autopct='%1.1f%%', startangle=90)
+  _,_,percentages = pie_ax.pie(damage_count.values(), labels=damage_list, colors=color_code, autopct='%1.1f%%', startangle=90)
+  for text in percentages:
+    text.set_color('white')
 
 # make legend
 def make_legend(ax):
