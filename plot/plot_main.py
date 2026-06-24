@@ -2,6 +2,7 @@ import geopandas as gpd
 import matplotlib.pyplot as plt
 from matplotlib.widgets import Button
 import contextily as ctx
+import math
 
 from plot_structure import show_fire_structure
 from plot_perimeter import show_fire_perimeter, make_perimeter_buttons
@@ -85,12 +86,15 @@ def add_scale_bar(ax):
   y_min, y_max = ax.get_ylim()
   map_width = x_max - x_min
   map_height = y_max - y_min
-  scale_length = max([length for length in 
+  center_lat = math.atan(math.sinh(((y_min + y_max) / 2) / 6378137))
+  projection_scale = 1 / math.cos(center_lat)
+  scale_length = max([length for length in
     [30.48, 76.2, 152.4, 304.8, 804.672, 1609.344, 8046.72, 16093.44, 80467.2] 
-    if length <= map_width / 4] or [30.48])
+    if length * projection_scale <= map_width / 4] or [30.48])
+  projected_length = scale_length * projection_scale
   x_start = x_min + map_width * 0.08
   y_start = y_min + map_height * 0.08
-  x_end = x_start + scale_length
+  x_end = x_start + projected_length
   label = str(int(scale_length / 1609.344)) + ' mi' if scale_length >= 1609.344 else str(int(scale_length / 0.3048)) + ' ft'
 
   ax.plot([x_start, x_end], [y_start, y_start], color='black', linewidth=3, zorder=4)
