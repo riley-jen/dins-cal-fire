@@ -68,7 +68,7 @@ def clean_by_time(gdf):
 clean_filename = '../files/POSTFIRE_CLEAN_DATA.geojson'
 clean_gdf = clean_by_time(gdf)
 
-# clean_gdf.to_file(clean_filename, 'GEOJSON')
+clean_gdf.to_file(clean_filename, 'GEOJSON')
 
 
 # ----- ARCHIVE -----
