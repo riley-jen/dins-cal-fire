@@ -42,6 +42,7 @@ def plot_fire(fire_name):
   add_scale_bar(map_ax)
   apply_map_base_features(fire_name)
   apply_pie_base_features()
+  apply_table_base_features()
   plt.draw()
 
 # make buttons for selecting fire
@@ -77,6 +78,10 @@ def apply_pie_base_features(fire_name = ""):
   pie_ax.set_title('damaged structures distribution')
   pie_ax.get_xaxis().set_visible(False)
   pie_ax.get_yaxis().set_visible(False)
+
+def apply_table_base_features():
+  table_ax.axis('off')
+
 
 # keep the map in the upper-left part of the fixed-size window
 def set_map_position(ax):
@@ -127,4 +132,5 @@ fit_map_bounds(map_ax)
 
 apply_map_base_features()
 apply_pie_base_features()
+apply_table_base_features()
 plt.show()
