@@ -56,7 +56,7 @@ def make_fire_buttons(buttons, fires_list):
 
 # --- HELPER FUNCTIONS ---
 
-# set basic features for the plot
+# set basic features for the map plot
 def apply_map_base_features(fire_name = ""):
   if fire_name != "":
     map_ax.set_title('california fire: ' + fire_name)
@@ -65,6 +65,7 @@ def apply_map_base_features(fire_name = ""):
   map_ax.get_xaxis().set_visible(False)
   map_ax.get_yaxis().set_visible(False)
 
+# set basic features for the pie plot
 def apply_pie_base_features(fire_name = ""):
   pie_ax.set_title('damaged structures distribution')
   pie_ax.get_xaxis().set_visible(False)

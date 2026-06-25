@@ -40,7 +40,7 @@ def show_fire_structure(map_ax, pie_ax, fire_name):
     text.set_visible(False)
   make_pie_legend(pie_ax, wedges, percentages)
 
-# make legend
+# make legend for map
 def make_map_legend(ax):
   handles, labels = ax.get_legend_handles_labels()
   legend_lookup = dict(zip([label.lower() for label in labels], handles))
@@ -55,7 +55,8 @@ def make_map_legend(ax):
     
   ax.legend(sorted_handles, sorted_labels, markerscale=3, title='Damage Rating', loc='upper right', 
     bbox_to_anchor=(0.96, 0.95), bbox_transform=ax.figure.transFigure, frameon=True, facecolor='white')
-  
+
+# make legend for pie
 def make_pie_legend(ax, wedges, percentages):
   texts = []
   counts = list(damage_count.values())
