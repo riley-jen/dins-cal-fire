@@ -12,6 +12,7 @@ gdf_base = gdf.to_crs(epsg=3857)
 # --- fire filtering ---
 materials = ["asphalt", "composite", "masonry", "metal", "tile", "vinyl", "wood", "n/a"]
 building_elements = ["ROOFCONSTRUCTION", "EXTERIORSIDING", "DECKPORCHONGRADE", "DECKPORCHELEVATED"]
+building_elements_display = ["material", "roof", "side", "ground deck", "elevated deck"]
 
 table_values = {element: {material: 0 for material in materials} for element in building_elements}
 
@@ -26,20 +27,21 @@ def show_fire_material(table_ax, fire_name):
 
       table_values[element][material] = len(material_gdf)
 
-  # Convert your live dictionary data
   df = gpd.pd.DataFrame(table_values)
+  df_clean = df.reset_index()
+  df_clean = df_clean.rename(columns={'index': 'Elements'})
 
-  # Render the table inside your fixed bounding box
+  df_clean.columns = building_elements_display
+
   t = table_ax.table(
-      cellText=df.values,
-      rowLabels=df.index,
-      colLabels=df.columns,
+      cellText=df_clean.values,
+      colLabels=df_clean.columns,
       loc='center',
       cellLoc='center'
   )
-  t.scale(1, 1.3)
-
-
+  t.auto_set_font_size(False)
+  t.set_fontsize(10)
+  t.scale(1.1, 1.3)
 
 def get_material(string):
   # Convert to lowercase and strip whitespace for consistent matching
