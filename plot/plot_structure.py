@@ -35,7 +35,7 @@ def show_fire_structure(map_ax, pie_ax, fire_name):
   make_map_legend(map_ax)
 
   # for pie chart
-  wedges,_,percentages = pie_ax.pie(damage_count.values(), labels=None, colors=color_code, autopct='%1.1f%%', startangle=90)
+  wedges,_,percentages = pie_ax.pie(list(damage_count.values()), labels=None, colors=color_code, autopct='%1.1f%%', startangle=90)
   for text in percentages:
     text.set_visible(False)
   make_pie_legend(pie_ax, wedges, percentages)
