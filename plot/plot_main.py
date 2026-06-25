@@ -18,10 +18,10 @@ fires_list = ['palisades', 'mountain', 'eaton', 'franklin', 'line', 'bridge']
 map_position = [0.06, 0.50, 0.66, 0.44] # left, bottom, width, height
 map_ax = fig.add_axes(map_position)
 
-pie_position = [0.5, 0.15, 0.44, 0.3]
+pie_position = [0.7, 0.1, 0.24, 0.38]
 pie_ax = fig.add_axes(pie_position)
 
-table_position = [0.06, 0.15, 0.44, 0.3]
+table_position = [0.06, 0.1, 0.6, 0.38]
 table_ax = fig.add_axes(table_position)
 
 # --- MAIN FUNCTIONS ---
@@ -41,7 +41,7 @@ def plot_fire(fire_name):
   
   add_scale_bar(map_ax)
   apply_map_base_features(fire_name)
-  apply_pie_base_features()
+  apply_pie_base_features(fire_name)
   apply_table_base_features()
   plt.draw()
 
@@ -75,9 +75,11 @@ def apply_map_base_features(fire_name = ""):
 
 # set basic features for the pie plot
 def apply_pie_base_features(fire_name = ""):
-  pie_ax.set_title('damaged structures distribution')
+  if fire_name != "":
+    pie_ax.set_title('damaged structures distribution')
   pie_ax.get_xaxis().set_visible(False)
   pie_ax.get_yaxis().set_visible(False)
+  pie_ax.axis('off')
 
 def apply_table_base_features():
   table_ax.axis('off')
