@@ -17,7 +17,7 @@ fires_list = ['palisades', 'mountain', 'eaton', 'franklin', 'line', 'bridge']
 map_position = [0.06, 0.50, 0.66, 0.44] # left, bottom, width, height
 map_ax = fig.add_axes(map_position)
 
-pie_position = [0.06, 0.15, 0.44, 0.3]
+pie_position = [0.5, 0.15, 0.44, 0.3]
 pie_ax = fig.add_axes(pie_position)
 
 # --- MAIN FUNCTIONS ---
