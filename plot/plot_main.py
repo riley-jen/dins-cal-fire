@@ -6,6 +6,7 @@ import math
 
 from plot_structure import show_fire_structure
 from plot_perimeter import show_fire_perimeter, make_perimeter_buttons
+from plot_material import show_fire_material
 
 
 # set basic features for the window
@@ -20,17 +21,23 @@ map_ax = fig.add_axes(map_position)
 pie_position = [0.5, 0.15, 0.44, 0.3]
 pie_ax = fig.add_axes(pie_position)
 
+table_position = [0.06, 0.15, 0.44, 0.3]
+table_ax = fig.add_axes(table_position)
+
 # --- MAIN FUNCTIONS ---
 # draw plots
 def plot_fire(fire_name):
   map_ax.clear()
   pie_ax.clear()
+  table_ax.clear()
 
   set_map_position(map_ax)
   show_fire_structure(map_ax, pie_ax, fire_name) # zorder 3
   show_fire_perimeter(map_ax, fire_name) # zorder 2
   fit_map_bounds(map_ax)
   ctx.add_basemap(map_ax, source=ctx.providers.OpenStreetMap.Mapnik, zorder=1)
+
+  show_fire_material(table_ax, fire_name)
   
   add_scale_bar(map_ax)
   apply_map_base_features(fire_name)
