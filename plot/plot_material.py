@@ -57,5 +57,4 @@ def get_material(string):
   if 'no ' in clean_string or 'other' in clean_string or 'unknown' in clean_string:
     return 'n/a'
   
-  print(string)
-  return "n/a"
+  return 'n/a'
