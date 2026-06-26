@@ -6,6 +6,7 @@ import math
 
 from plot_structure import show_fire_structure
 from plot_perimeter import show_fire_perimeter, make_perimeter_buttons
+from plot_material import show_fire_material
 
 
 # set basic features for the window
@@ -17,24 +18,29 @@ fires_list = ['palisades', 'mountain', 'eaton', 'franklin', 'line', 'bridge']
 map_position = [0.06, 0.50, 0.66, 0.44] # left, bottom, width, height
 map_ax = fig.add_axes(map_position)
 
-pie_position = [0.5, 0.15, 0.44, 0.3]
+pie_position = [0.7, 0.1, 0.24, 0.38]
 pie_ax = fig.add_axes(pie_position)
+
+table_position = [0.06, 0.1, 0.6, 0.38]
+table_ax = fig.add_axes(table_position)
 
 # --- MAIN FUNCTIONS ---
 # draw plots
 def plot_fire(fire_name):
   map_ax.clear()
   pie_ax.clear()
+  table_ax.clear()
 
   set_map_position(map_ax)
   show_fire_structure(map_ax, pie_ax, fire_name) # zorder 3
   show_fire_perimeter(map_ax, fire_name) # zorder 2
   fit_map_bounds(map_ax)
   ctx.add_basemap(map_ax, source=ctx.providers.OpenStreetMap.Mapnik, zorder=1)
+
+  show_fire_material(table_ax, fire_name)
   
   add_scale_bar(map_ax)
-  apply_map_base_features(fire_name)
-  apply_pie_base_features()
+  apply_base_features(fire_name)
   plt.draw()
 
 # make buttons for selecting fire
@@ -56,20 +62,22 @@ def make_fire_buttons(buttons, fires_list):
 
 # --- HELPER FUNCTIONS ---
 
-# set basic features for the map plot
-def apply_map_base_features(fire_name = ""):
-  if fire_name != "":
+# set basic features for all plots
+def apply_base_features(fire_name = ''):
+  if fire_name != '':
     map_ax.set_title('california fire: ' + fire_name)
+    pie_ax.set_title('damaged structures\ndistribution')
+    table_ax.set_title('structural composition and material', y=0.85)
   else:
     map_ax.set_title('california fire')
+
   map_ax.get_xaxis().set_visible(False)
   map_ax.get_yaxis().set_visible(False)
 
-# set basic features for the pie plot
-def apply_pie_base_features(fire_name = ""):
-  pie_ax.set_title('damaged structures distribution')
-  pie_ax.get_xaxis().set_visible(False)
-  pie_ax.get_yaxis().set_visible(False)
+  pie_ax.axis('off')
+
+  table_ax.axis('off')
+
 
 # keep the map in the upper-left part of the fixed-size window
 def set_map_position(ax):
@@ -118,6 +126,5 @@ buttons = []
 make_fire_buttons(buttons, fires_list)
 fit_map_bounds(map_ax)
 
-apply_map_base_features()
-apply_pie_base_features()
+apply_base_features()
 plt.show()
