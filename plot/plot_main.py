@@ -63,8 +63,8 @@ def make_fire_buttons(buttons, fires_list):
 # --- HELPER FUNCTIONS ---
 
 # set basic features for all plots
-def apply_base_features(fire_name = ""):
-  if fire_name != "":
+def apply_base_features(fire_name = ''):
+  if fire_name != '':
     map_ax.set_title('california fire: ' + fire_name)
     pie_ax.set_title('damaged structures\ndistribution')
     table_ax.set_title('structural composition and material', y=0.85)

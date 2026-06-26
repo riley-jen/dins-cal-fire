@@ -10,9 +10,9 @@ gdf = gdf.set_crs('EPSG:3310', allow_override=True)
 gdf_base = gdf.to_crs(epsg=3857)
 
 # --- fire filtering ---
-materials = ["asphalt", "composite", "masonry", "metal", "tile", "vinyl", "wood", "n/a"]
-building_elements = ["ROOFCONSTRUCTION", "EXTERIORSIDING", "DECKPORCHONGRADE", "DECKPORCHELEVATED"]
-building_elements_display = ["material", "roof", "side", "ground deck", "elevated deck"]
+materials = ['asphalt', 'composite', 'masonry', 'metal', 'tile', 'vinyl', 'wood', 'n/a']
+building_elements = ['ROOFCONSTRUCTION', 'EXTERIORSIDING', 'DECKPORCHONGRADE', 'DECKPORCHELEVATED']
+building_elements_display = ['material', 'roof', 'side', 'ground deck', 'elevated deck']
 
 table_values = {element: {material: 0 for material in materials} for element in building_elements}
 
@@ -45,17 +45,17 @@ def show_fire_material(table_ax, fire_name):
 
 def get_material(string):
   # Convert to lowercase and strip whitespace for consistent matching
-  clean_string = string.strip().lower().replace("/", " ")
+  clean_string = string.strip().lower().replace('/', ' ')
   
   for material in materials:
     if clean_string == material:
       return material
           
-  if clean_string in ["masonry concrete", "stucco brick cement", "concrete"]:
-    return "masonry"
+  if clean_string in ['masonry concrete', 'stucco brick cement', 'concrete']:
+    return 'masonry'
   
-  if "no " in clean_string or "other" in clean_string or "unknown" in clean_string:
-    return "n/a"
+  if 'no ' in clean_string or 'other' in clean_string or 'unknown' in clean_string:
+    return 'n/a'
   
   print(string)
   return "n/a"
