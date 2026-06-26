@@ -42,7 +42,7 @@ def plot_fire(fire_name):
   add_scale_bar(map_ax)
   apply_map_base_features(fire_name)
   apply_pie_base_features(fire_name)
-  apply_table_base_features()
+  apply_table_base_features(fire_name)
   plt.draw()
 
 # make buttons for selecting fire
@@ -76,12 +76,14 @@ def apply_map_base_features(fire_name = ""):
 # set basic features for the pie plot
 def apply_pie_base_features(fire_name = ""):
   if fire_name != "":
-    pie_ax.set_title('damaged structures distribution')
+    pie_ax.set_title('damaged structures\ndistribution')
   pie_ax.get_xaxis().set_visible(False)
   pie_ax.get_yaxis().set_visible(False)
   pie_ax.axis('off')
 
-def apply_table_base_features():
+def apply_table_base_features(fire_name = ""):
+  if fire_name != "":
+    table_ax.set_title('structural composition and material', y=0.85)
   table_ax.axis('off')
 
 
