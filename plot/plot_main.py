@@ -40,9 +40,7 @@ def plot_fire(fire_name):
   show_fire_material(table_ax, fire_name)
   
   add_scale_bar(map_ax)
-  apply_map_base_features(fire_name)
-  apply_pie_base_features(fire_name)
-  apply_table_base_features(fire_name)
+  apply_base_features(fire_name)
   plt.draw()
 
 # make buttons for selecting fire
@@ -64,26 +62,20 @@ def make_fire_buttons(buttons, fires_list):
 
 # --- HELPER FUNCTIONS ---
 
-# set basic features for the map plot
-def apply_map_base_features(fire_name = ""):
+# set basic features for all plots
+def apply_base_features(fire_name = ""):
   if fire_name != "":
     map_ax.set_title('california fire: ' + fire_name)
+    pie_ax.set_title('damaged structures\ndistribution')
+    table_ax.set_title('structural composition and material', y=0.85)
   else:
     map_ax.set_title('california fire')
+
   map_ax.get_xaxis().set_visible(False)
   map_ax.get_yaxis().set_visible(False)
 
-# set basic features for the pie plot
-def apply_pie_base_features(fire_name = ""):
-  if fire_name != "":
-    pie_ax.set_title('damaged structures\ndistribution')
-  pie_ax.get_xaxis().set_visible(False)
-  pie_ax.get_yaxis().set_visible(False)
   pie_ax.axis('off')
 
-def apply_table_base_features(fire_name = ""):
-  if fire_name != "":
-    table_ax.set_title('structural composition and material', y=0.85)
   table_ax.axis('off')
 
 
@@ -134,7 +126,5 @@ buttons = []
 make_fire_buttons(buttons, fires_list)
 fit_map_bounds(map_ax)
 
-apply_map_base_features()
-apply_pie_base_features()
-apply_table_base_features()
+apply_base_features()
 plt.show()
