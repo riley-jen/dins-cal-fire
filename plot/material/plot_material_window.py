@@ -26,6 +26,24 @@ def plot_fire_material(fire_name):
   plt.draw()
 
 
+# make buttons for selecting fire
+def make_fire_buttons(buttons, fires_list):
+  nf = len(fires_list)
+
+  for i in range(len(fires_list)):
+    fire_name = fires_list[i]
+    
+    space = 0.025
+    width = (1-(0.2+space*(nf-1)))/nf
+    button_space = fig.add_axes([0.1+(width+space)*i, 0.05, width, 0.05]) # left, bottom, width, height
+    fire_btn = Button(button_space, fire_name)
+    fire_btn.on_clicked(lambda event, name=fire_name: plot_fire_material(name))
+
+    buttons.append(fire_btn)
+  
+  return buttons
+
+
 # --- HELPER FUNCTIONS ---
 
 def apply_base_features(fire_name = ''):
