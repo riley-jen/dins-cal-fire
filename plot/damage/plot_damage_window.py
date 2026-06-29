@@ -3,9 +3,9 @@ from matplotlib.widgets import Button
 
 import extract_structure_data
 import extract_perimeter_data
-from plot_map import show_fire_map
-from plot_pie import show_damage_pie
-from plot_material import show_fire_material
+from plot.damage.plot_map import show_fire_map
+from plot.damage.plot_pie import show_damage_pie
+from plot.damage.plot_material import show_fire_material
 
 # --- VARIABLES ---
 fig = None
