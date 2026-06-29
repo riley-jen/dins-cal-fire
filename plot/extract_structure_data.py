@@ -1,9 +1,10 @@
 import geopandas as gpd
 import pandas as pd
+from pathlib import Path
 
 
 # --- PREP ---
-filename = '../files/POSTFIRE_CLEAN_DATA.geojson'
+filename = Path(__file__).resolve().parent.parent / 'files' / 'POSTFIRE_CLEAN_DATA.geojson'
 gdf = gpd.read_file(filename)
 
 gdf = gdf.set_crs('EPSG:3310', allow_override=True)

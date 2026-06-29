@@ -1,8 +1,9 @@
 import geopandas as gpd
+from pathlib import Path
 
 
 # --- PREP ---
-filename = '../files/WFIGS_INTERAGENCY_PERIMETERS_FILTERED_DATA.geojson'
+filename = Path(__file__).resolve().parent.parent / 'files' / 'WFIGS_INTERAGENCY_PERIMETERS_FILTERED_DATA.geojson'
 gdf = gpd.read_file(filename)
 
 gdf = gdf.set_crs('EPSG:4326', allow_override=True)
