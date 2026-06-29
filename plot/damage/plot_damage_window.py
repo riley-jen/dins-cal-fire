@@ -9,7 +9,6 @@ from damage.plot_pie import show_damage_pie
 # --- VARIABLES ---
 fig = None
 buttons = []
-material_plot_callback = None
 fires_list = ['palisades', 'mountain', 'eaton', 'franklin', 'line', 'bridge']
 
 map_position = [0.06, 0.50, 0.66, 0.44] # left, bottom, width, height
@@ -30,9 +29,6 @@ def plot_fire(fire_name):
 
   show_fire_map(map_ax, structure_data, perimeter_data, map_position)
   show_damage_pie(pie_ax, structure_data)
-
-  if material_plot_callback is not None:
-    material_plot_callback(fire_name)
   
   apply_base_features(fire_name)
   plt.draw()
@@ -71,10 +67,9 @@ def apply_base_features(fire_name = ''):
 
 # --- SET UP ---
 
-def make_damage_window(input_figure, input_material_plot_callback = None):
-  global fig, map_ax, pie_ax, buttons, material_plot_callback
+def make_damage_window(input_figure):
+  global fig, map_ax, pie_ax, buttons
   fig = input_figure
-  material_plot_callback = input_material_plot_callback
 
   fig.canvas.manager.set_window_title('Damage Window')
   map_ax = fig.add_axes(map_position)
