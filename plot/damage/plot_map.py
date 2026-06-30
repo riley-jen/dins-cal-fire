@@ -1,14 +1,15 @@
 import contextily as ctx
 import math
 import matplotlib.pyplot as plt
+import pandas as pd
 from matplotlib.widgets import Button
 
 
 # --- MAIN FUNCTIONS ---
-def show_fire_map(map_ax, structure_data, perimeter_data, map_position):
+def show_fire_map(map_ax, structure_data, perimeter_data, map_position, perimeter_index=0):
   set_map_position(map_ax, map_position)
   show_fire_structures(map_ax, structure_data)
-  show_fire_perimeter(map_ax, perimeter_data)
+  show_fire_perimeter(map_ax, perimeter_data, perimeter_index)
   fit_map_bounds(map_ax, map_position)
   ctx.add_basemap(map_ax, source=ctx.providers.OpenStreetMap.Mapnik, zorder=1)
   add_scale_bar(map_ax)
@@ -45,9 +46,30 @@ def make_map_legend(ax, damage_list):
 
 
 # --- PERIMETER LAYER ---
-def show_fire_perimeter(ax, perimeter_data):
+def show_fire_perimeter(ax, perimeter_data, perimeter_index):
   perimeter_gdf = perimeter_data['perimeter_gdf']
-  perimeter_gdf.plot(ax=ax, categorical=True, markersize=2, color='blue', alpha=0.3, zorder=3)
+
+  if len(perimeter_gdf) == 0:
+    print('No perimeter data to plot.')
+    return
+
+  perimeter_index = max(0, min(perimeter_index, len(perimeter_gdf) - 1))
+  selected_perimeter_gdf = perimeter_gdf.iloc[[perimeter_index]]
+
+  print_perimeter_dates(selected_perimeter_gdf)
+  selected_perimeter_gdf.plot(ax=ax, categorical=True, markersize=2, color='blue', alpha=0.3, zorder=3)
+
+
+def print_perimeter_dates(perimeter_gdf):
+  date_columns = ['poly_CreateDate', 'poly_DateCurrent', 'poly_PolygonDateTime']
+
+  for perimeter_index, perimeter in perimeter_gdf.iterrows():
+    print(f'Perimeter dates for index {perimeter_index}:')
+
+    for date_column in date_columns:
+      date_value = perimeter[date_column] if date_column in perimeter_gdf.columns else None
+      date_value = 'null' if pd.isna(date_value) else date_value
+      print(f'  {date_column}: {date_value}')
 
 
 # --- MAP HELPERS ---
@@ -94,21 +116,33 @@ def add_scale_bar(ax):
 
 
 # ----- ARCHIVE -----
-def make_perimeter_buttons(dict, buttons):
-  up_button_space = plt.axes([0.1, 0.15, 0.3, 0.05]) # left, bottom, width, height
-  up_button = Button(up_button_space, '^')
-  up_button.on_clicked(lambda event: change_index('up', dict))
+def show_perimeter_button(buttons, position, label, on_click):
+  button_space = plt.axes(position) # left, bottom, width, height
+  button = Button(button_space, label)
+  button.on_clicked(on_click)
+  buttons.append(button)
 
-  down_button_space = plt.axes([0.6, 0.15, 0.3, 0.05]) # left, bottom, width, height
-  down_button = Button(down_button_space, 'v')
-  down_button.on_clicked(lambda event: change_index('down', dict))
+  return button
 
-  buttons.append(up_button)
-  buttons.append(down_button)
+
+def make_perimeter_buttons(dict, buttons, on_change=None):
+  def handle_change(direction):
+    change_index(direction, dict)
+
+    if on_change is not None:
+      on_change()
+
+  show_perimeter_button(buttons, [0.1, 0.44, 0.08, 0.04], '^', lambda event: handle_change('up'))
+  show_perimeter_button(buttons, [0.2, 0.44, 0.08, 0.04], 'v', lambda event: handle_change('down'))
 
 
 def change_index(direction, dict):
+  max_index = dict.get('max_index', 0)
+
   if direction == 'up':
     dict['index'] += 1
   else:
     dict['index'] -= 1
+
+  if max_index >= 0:
+    dict['index'] = dict['index'] % (max_index + 1)
