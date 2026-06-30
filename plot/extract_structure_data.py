@@ -13,7 +13,9 @@ gdf_base = gdf.to_crs(epsg=3857)
 
 # --- DAMAGE DATA ---
 damage_list = ['no damage', 'affected (>0-10%)', 'minor (10-25%)', 'major (25-50%)', 'destroyed (>50%)', 'inaccessible']
-color_code = ['green', 'yellow', 'orange', 'red', 'black', 'gray']
+damage_display_list = ['no damage', 'affected', 'minor', 'major', 'destroyed', 'inaccessible']
+damage_display_dict = dict(zip(damage_list, damage_display_list))
+color_code = ['green', 'gold', 'orange', 'red', 'black', 'gray']
 color_dict = dict(zip(damage_list, color_code))
 
 
@@ -35,6 +37,20 @@ def get_damage_data(fire_gdf):
     'damage_gdfs': damage_gdfs,
     'total': len(fire_gdf),
   }
+
+
+def get_gdf_for_damages(damage_gdfs, displayed_damages):
+  selected_gdfs = []
+
+  for damage in damage_list:
+    if damage in displayed_damages:
+      selected_gdfs.append(damage_gdfs[damage])
+
+  if len(selected_gdfs) == 0:
+    first_damage = damage_list[0]
+    return damage_gdfs[first_damage].iloc[0:0]
+
+  return gpd.GeoDataFrame(pd.concat(selected_gdfs), crs=selected_gdfs[0].crs)
 
 
 # --- MATERIAL DATA ---
@@ -77,6 +93,11 @@ def get_material_table(fire_gdf):
   return df_clean
 
 
+def get_material_table_for_damages(damage_gdfs, displayed_damages):
+  damage_gdf = get_gdf_for_damages(damage_gdfs, displayed_damages)
+  return get_material_table(damage_gdf)
+
+
 # --- META FUNCTION ---
 def get_data(fire_name):
   fire_gdf = get_fire_gdf(fire_name)
@@ -89,6 +110,8 @@ def get_data(fire_name):
     'total': damage_data['total'],
     'material_table': get_material_table(fire_gdf),
     'damage_list': damage_list,
+    'damage_display_list': damage_display_list,
+    'damage_display_dict': damage_display_dict,
     'color_code': color_code,
     'color_dict': color_dict,
   }
