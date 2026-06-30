@@ -8,6 +8,7 @@ from material.plot_material import show_fire_material
 # --- VARIABLES ---
 fig = None
 material_ax = None
+total_text = None
 buttons = []
 damage_boxes = []
 fires_list = ['palisades', 'mountain', 'eaton', 'franklin', 'line', 'bridge']
@@ -31,14 +32,16 @@ def plot_fire_material(fire_name, displayed_damages):
   material_ax.clear()
 
   structure_data = structure_data_by_fire[fire_name]
-  filtered_structure_data = structure_data.copy()
-  filtered_structure_data['material_table'] = extract_structure_data.get_material_table_for_damages(
+  displayed_gdf = extract_structure_data.get_gdf_for_damages(
     structure_data['damage_gdfs'],
     displayed_damages
   )
+  filtered_structure_data = structure_data.copy()
+  filtered_structure_data['material_table'] = extract_structure_data.get_material_table(displayed_gdf)
 
   show_fire_material(material_ax, filtered_structure_data)
 
+  update_total_count(len(displayed_gdf))
   apply_base_features(fire_name)
   plt.draw()
 
@@ -94,6 +97,9 @@ def toggle_damage(damage):
 
 # --- HELPER FUNCTIONS ---
 
+def update_total_count(total):
+  total_text.set_text('total structures: ' + str(total))
+
 def apply_base_features(fire_name = ''):
   if fire_name != '':
     material_ax.set_title('structural composition and material', y=0.85)
@@ -104,12 +110,13 @@ def apply_base_features(fire_name = ''):
 # --- SET UP ---
 
 def make_material_window(input_figure):
-  global fig, material_ax, buttons, damage_boxes
+  global fig, material_ax, total_text, buttons, damage_boxes
   preload_data()
 
   fig = input_figure
 
   fig.canvas.manager.set_window_title('Material Window')
+  total_text = fig.text(0.5, 0.985, 'total structures: 0', ha='center', va='top', fontsize=13)
   material_ax = fig.add_axes(table_position)
   
   buttons = []
