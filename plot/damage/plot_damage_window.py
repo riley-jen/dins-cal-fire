@@ -10,6 +10,8 @@ from damage.plot_pie import show_damage_pie
 fig = None
 buttons = []
 fires_list = ['palisades', 'mountain', 'eaton', 'franklin', 'line', 'bridge']
+structure_data_by_fire = {}
+perimeter_data_by_fire = {}
 
 map_position = [0.06, 0.50, 0.66, 0.44] # left, bottom, width, height
 map_ax = None
@@ -19,13 +21,19 @@ pie_ax = None
 
 
 # --- MAIN FUNCTIONS ---
+def preload_data():
+  for fire_name in fires_list:
+    structure_data_by_fire[fire_name] = extract_structure_data.get_data(fire_name)
+    perimeter_data_by_fire[fire_name] = extract_perimeter_data.get_data(fire_name)
+
+
 # draw plots
 def plot_fire(fire_name):
   map_ax.clear()
   pie_ax.clear()
 
-  structure_data = extract_structure_data.get_data(fire_name)
-  perimeter_data = extract_perimeter_data.get_data(fire_name)
+  structure_data = structure_data_by_fire[fire_name]
+  perimeter_data = perimeter_data_by_fire[fire_name]
 
   show_fire_map(map_ax, structure_data, perimeter_data, map_position)
   show_damage_pie(pie_ax, structure_data)
@@ -47,8 +55,8 @@ def make_fire_buttons(buttons, fires_list):
     fire_btn.on_clicked(lambda event, name=fire_name: plot_fire(name))
 
     buttons.append(fire_btn)
-  
   return buttons
+
 
 # --- HELPER FUNCTIONS ---
 
@@ -69,6 +77,8 @@ def apply_base_features(fire_name = ''):
 
 def make_damage_window(input_figure):
   global fig, map_ax, pie_ax, buttons
+  preload_data()
+
   fig = input_figure
 
   fig.canvas.manager.set_window_title('Damage Window')

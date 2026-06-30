@@ -2,7 +2,7 @@
 this program is to filter the raw, cal fire sourced .geojson 
 it writes a new .geojson that contains only the features from the selected fires
 
-not to be confused with clean_data.py
+not to be confused with clean_structure.py
 '''
 
 import json

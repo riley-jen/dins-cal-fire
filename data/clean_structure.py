@@ -1,9 +1,8 @@
 '''
-this program is to clean the already filtered .geojson
-it writes a new .geojson that cleans the errors from the data
-includes duplicate inputs and same incident names
+this program is to clean the already filtered structure .geojson
+it writes a new .geojson that cleans the errors from the data by time
 
-not to be confused with filter_data.py
+not to be confused with filter_structure.py
 '''
 
 from datetime import datetime

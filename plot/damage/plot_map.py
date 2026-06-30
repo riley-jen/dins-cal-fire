@@ -1,7 +1,6 @@
 import contextily as ctx
 import math
 import matplotlib.pyplot as plt
-from matplotlib.widgets import Button
 
 
 # --- MAIN FUNCTIONS ---
@@ -47,6 +46,11 @@ def make_map_legend(ax, damage_list):
 # --- PERIMETER LAYER ---
 def show_fire_perimeter(ax, perimeter_data):
   perimeter_gdf = perimeter_data['perimeter_gdf']
+
+  if len(perimeter_gdf) == 0:
+    print('No perimeter data to plot.')
+    return
+
   perimeter_gdf.plot(ax=ax, categorical=True, markersize=2, color='blue', alpha=0.3, zorder=3)
 
 
@@ -92,8 +96,8 @@ def add_scale_bar(ax):
   ax.text((x_start + x_end) / 2, y_start + map_height * 0.02, label, ha='center', va='bottom', color='black', 
     fontsize=9, fontweight='bold', bbox=dict(facecolor='white', edgecolor='none', alpha=0.8, pad=2), zorder=4)
 
-
 # ----- ARCHIVE -----
+'''
 def make_perimeter_buttons(dict, buttons):
   up_button_space = plt.axes([0.1, 0.15, 0.3, 0.05]) # left, bottom, width, height
   up_button = Button(up_button_space, '^')
@@ -112,3 +116,4 @@ def change_index(direction, dict):
     dict['index'] += 1
   else:
     dict['index'] -= 1
+'''
