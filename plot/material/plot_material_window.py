@@ -15,7 +15,7 @@ structure_data_by_fire = {}
 displayed_damages = extract_structure_data.damage_list.copy()
 current_fire_name = None
 
-table_position = [0.06, 0.1, 0.6, 0.38]
+table_position = [0.1, 0.55, 0.8, 0.34]
 
 
 # --- MAIN FUNCTIONS ---
