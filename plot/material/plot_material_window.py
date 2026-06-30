@@ -10,21 +10,25 @@ fig = None
 material_ax = None
 buttons = []
 fires_list = ['palisades', 'mountain', 'eaton', 'franklin', 'line', 'bridge']
+structure_data_by_fire = {}
 
 table_position = [0.06, 0.1, 0.6, 0.38]
 
 
 # --- MAIN FUNCTIONS ---
+def preload_data():
+  for fire_name in fires_list:
+    structure_data_by_fire[fire_name] = extract_structure_data.get_data(fire_name)
+
 
 def plot_fire_material(fire_name):
   material_ax.clear()
 
-  structure_data = extract_structure_data.get_data(fire_name)
+  structure_data = structure_data_by_fire[fire_name]
   show_fire_material(material_ax, structure_data)
 
   apply_base_features(fire_name)
   plt.draw()
-
 
 # make buttons for selecting fire
 def make_fire_buttons(buttons, fires_list):
@@ -57,6 +61,8 @@ def apply_base_features(fire_name = ''):
 
 def make_material_window(input_figure):
   global fig, material_ax, buttons
+  preload_data()
+
   fig = input_figure
 
   fig.canvas.manager.set_window_title('Material Window')
