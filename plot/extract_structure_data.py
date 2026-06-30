@@ -37,6 +37,20 @@ def get_damage_data(fire_gdf):
   }
 
 
+def get_gdf_for_damages(damage_gdfs, displayed_damages):
+  selected_gdfs = []
+
+  for damage in damage_list:
+    if damage in displayed_damages:
+      selected_gdfs.append(damage_gdfs[damage])
+
+  if len(selected_gdfs) == 0:
+    first_damage = damage_list[0]
+    return damage_gdfs[first_damage].iloc[0:0]
+
+  return gpd.GeoDataFrame(pd.concat(selected_gdfs), crs=selected_gdfs[0].crs)
+
+
 # --- MATERIAL DATA ---
 materials = ['asphalt', 'composite', 'masonry', 'metal', 'tile', 'vinyl', 'wood', 'n/a']
 building_elements = ['ROOFCONSTRUCTION', 'EXTERIORSIDING', 'DECKPORCHONGRADE', 'DECKPORCHELEVATED']
@@ -75,6 +89,11 @@ def get_material_table(fire_gdf):
   df_clean.columns = building_elements_display
 
   return df_clean
+
+
+def get_material_table_for_damages(damage_gdfs, displayed_damages):
+  damage_gdf = get_gdf_for_damages(damage_gdfs, displayed_damages)
+  return get_material_table(damage_gdf)
 
 
 # --- META FUNCTION ---
