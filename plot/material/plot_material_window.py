@@ -68,7 +68,12 @@ def make_damage_boxes(boxes, damage_list):
     space = 0.01
     width = (1-(0.2+space*(nd-1)))/nd
     box_space = fig.add_axes([0.1+(width+space)*i, 0.9, width, 0.05]) # left, bottom, width, height
-    damage_box = CheckButtons(box_space, [damage], [damage in displayed_damages])
+    box_space.set_frame_on(False)
+    box_space.set_xticks([])
+    box_space.set_yticks([])
+
+    display_name = extract_structure_data.damage_display_dict[damage]
+    damage_box = CheckButtons(box_space, [display_name], [damage in displayed_damages])
     damage_box.labels[0].set_color(extract_structure_data.color_dict[damage])
     damage_box.on_clicked(lambda label, name=damage: toggle_damage(name))
 
