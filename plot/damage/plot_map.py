@@ -1,15 +1,13 @@
 import contextily as ctx
 import math
 import matplotlib.pyplot as plt
-import pandas as pd
-from matplotlib.widgets import Button
 
 
 # --- MAIN FUNCTIONS ---
-def show_fire_map(map_ax, structure_data, perimeter_data, map_position, perimeter_index=0):
+def show_fire_map(map_ax, structure_data, perimeter_data, map_position):
   set_map_position(map_ax, map_position)
   show_fire_structures(map_ax, structure_data)
-  show_fire_perimeter(map_ax, perimeter_data, perimeter_index)
+  show_fire_perimeter(map_ax, perimeter_data)
   fit_map_bounds(map_ax, map_position)
   ctx.add_basemap(map_ax, source=ctx.providers.OpenStreetMap.Mapnik, zorder=1)
   add_scale_bar(map_ax)
@@ -46,30 +44,14 @@ def make_map_legend(ax, damage_list):
 
 
 # --- PERIMETER LAYER ---
-def show_fire_perimeter(ax, perimeter_data, perimeter_index):
+def show_fire_perimeter(ax, perimeter_data):
   perimeter_gdf = perimeter_data['perimeter_gdf']
 
   if len(perimeter_gdf) == 0:
     print('No perimeter data to plot.')
     return
 
-  perimeter_index = max(0, min(perimeter_index, len(perimeter_gdf) - 1))
-  selected_perimeter_gdf = perimeter_gdf.iloc[[perimeter_index]]
-
-  print_perimeter_dates(selected_perimeter_gdf)
-  selected_perimeter_gdf.plot(ax=ax, categorical=True, markersize=2, color='blue', alpha=0.3, zorder=3)
-
-
-def print_perimeter_dates(perimeter_gdf):
-  date_columns = ['poly_CreateDate', 'poly_DateCurrent', 'poly_PolygonDateTime']
-
-  for perimeter_index, perimeter in perimeter_gdf.iterrows():
-    print(f'Perimeter dates for index {perimeter_index}:')
-
-    for date_column in date_columns:
-      date_value = perimeter[date_column] if date_column in perimeter_gdf.columns else None
-      date_value = 'null' if pd.isna(date_value) else date_value
-      print(f'  {date_column}: {date_value}')
+  perimeter_gdf.plot(ax=ax, categorical=True, markersize=2, color='blue', alpha=0.3, zorder=3)
 
 
 # --- MAP HELPERS ---
@@ -113,36 +95,3 @@ def add_scale_bar(ax):
   ax.plot([x_start, x_end], [y_start, y_start], color='black', linewidth=3, zorder=4)
   ax.text((x_start + x_end) / 2, y_start + map_height * 0.02, label, ha='center', va='bottom', color='black', 
     fontsize=9, fontweight='bold', bbox=dict(facecolor='white', edgecolor='none', alpha=0.8, pad=2), zorder=4)
-
-
-# ----- ARCHIVE -----
-def show_perimeter_button(buttons, position, label, on_click):
-  button_space = plt.axes(position) # left, bottom, width, height
-  button = Button(button_space, label)
-  button.on_clicked(on_click)
-  buttons.append(button)
-
-  return button
-
-
-def make_perimeter_buttons(dict, buttons, on_change=None):
-  def handle_change(direction):
-    change_index(direction, dict)
-
-    if on_change is not None:
-      on_change()
-
-  show_perimeter_button(buttons, [0.1, 0.44, 0.08, 0.04], '^', lambda event: handle_change('up'))
-  show_perimeter_button(buttons, [0.2, 0.44, 0.08, 0.04], 'v', lambda event: handle_change('down'))
-
-
-def change_index(direction, dict):
-  max_index = dict.get('max_index', 0)
-
-  if direction == 'up':
-    dict['index'] += 1
-  else:
-    dict['index'] -= 1
-
-  if max_index >= 0:
-    dict['index'] = dict['index'] % (max_index + 1)

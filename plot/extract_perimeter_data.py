@@ -12,7 +12,12 @@ gdf_base = gdf.to_crs(epsg=3857)
 
 # --- PERIMETER DATA ---
 def get_perimeter_gdf(fire_name):
-  return gdf_base[(gdf_base['poly_IncidentName'].str.lower()) == fire_name]
+  fire_gdf = gdf_base[(gdf_base['poly_IncidentName'].str.lower()) == fire_name]
+
+  if len(fire_gdf) == 0:
+    return fire_gdf
+
+  return fire_gdf.iloc[[0]]
 
 
 # --- META FUNCTION ---
@@ -21,5 +26,4 @@ def get_data(fire_name):
 
   return {
     'perimeter_gdf': perimeter_gdf,
-    'total': len(perimeter_gdf),
   }
