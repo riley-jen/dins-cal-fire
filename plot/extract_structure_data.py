@@ -15,7 +15,7 @@ gdf_base = gdf.to_crs(epsg=3857)
 damage_list = ['no damage', 'affected (>0-10%)', 'minor (10-25%)', 'major (25-50%)', 'destroyed (>50%)', 'inaccessible']
 damage_display_list = ['no damage', 'affected', 'minor', 'major', 'destroyed', 'inaccessible']
 damage_display_dict = dict(zip(damage_list, damage_display_list))
-color_code = ['green', 'goldenrod', 'orange', 'red', 'black', 'gray']
+color_code = ['green', 'gold', 'orange', 'red', 'black', 'gray']
 color_dict = dict(zip(damage_list, color_code))
 
 
