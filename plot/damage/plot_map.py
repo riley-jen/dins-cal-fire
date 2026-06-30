@@ -95,3 +95,25 @@ def add_scale_bar(ax):
   ax.plot([x_start, x_end], [y_start, y_start], color='black', linewidth=3, zorder=4)
   ax.text((x_start + x_end) / 2, y_start + map_height * 0.02, label, ha='center', va='bottom', color='black', 
     fontsize=9, fontweight='bold', bbox=dict(facecolor='white', edgecolor='none', alpha=0.8, pad=2), zorder=4)
+
+# ----- ARCHIVE -----
+'''
+def make_perimeter_buttons(dict, buttons):
+  up_button_space = plt.axes([0.1, 0.15, 0.3, 0.05]) # left, bottom, width, height
+  up_button = Button(up_button_space, '^')
+  up_button.on_clicked(lambda event: change_index('up', dict))
+
+  down_button_space = plt.axes([0.6, 0.15, 0.3, 0.05]) # left, bottom, width, height
+  down_button = Button(down_button_space, 'v')
+  down_button.on_clicked(lambda event: change_index('down', dict))
+
+  buttons.append(up_button)
+  buttons.append(down_button)
+
+
+def change_index(direction, dict):
+  if direction == 'up':
+    dict['index'] += 1
+  else:
+    dict['index'] -= 1
+'''
