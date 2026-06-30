@@ -1,3 +1,10 @@
+'''
+this program is to filter the raw, wfigs sourced .geojson 
+it writes a new .geojson that contains only the features from the selected fires
+
+not to be confused with clean_perimeter.py
+'''
+
 import json
 import ijson
 import geopandas as gpd
