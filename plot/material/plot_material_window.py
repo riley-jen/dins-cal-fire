@@ -2,7 +2,7 @@ import matplotlib.pyplot as plt
 from matplotlib.widgets import Button, CheckButtons
 
 import extract_structure_data
-from material.plot_material import show_fire_material, show_structure_element_table
+from material.plot_table import show_fire_material, show_structure_element_table
 
 
 # --- VARIABLES ---
