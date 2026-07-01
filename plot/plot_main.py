@@ -39,10 +39,10 @@ damage_box_width = 0.11
 damage_box_height = 0.035
 damage_box_space = 0.006
 
-material_table_position = [0.55, 0.55, 0.4, 0.34]
+material_table_position = [0.55, 0.465, 0.4, 0.34]
 material_bar_position = [0.575, 0.155, 0.23, 0.28]
 material_structure_element_table_positions = {
-  'patio_fence_table': [0.55, 0.465, 0.4, 0.080],
+  'patio_fence_table': [0.55, 0.8, 0.4, 0.080],
   'eaves_table': [0.82, 0.355, 0.15, 0.080],
   'ventscreen_table': [0.82, 0.240, 0.15, 0.095],
   'windowpane_table': [0.82, 0.140, 0.15, 0.080],
