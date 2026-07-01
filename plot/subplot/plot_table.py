@@ -7,7 +7,7 @@ it handles the main material table and the smaller structure element tables
 draws the main material composition table
 this table uses the largest font and scale in the material window
 '''
-def show_fire_material(table_ax, structure_data):
+def show_table(table_ax, structure_data):
   df_clean = structure_data['material_table']
  
   t = table_ax.table(
