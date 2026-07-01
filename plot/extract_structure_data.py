@@ -286,12 +286,16 @@ returns combustible, non-combustible, and n/a counts for one material column
 this is used to summarize the larger material table
 '''
 def get_material_combustibility_counts(fire_gdf, property_name):
+  clean_values = fire_gdf[property_name].astype(str).str.strip().str.lower()
+  raw_combustible = clean_values == 'combustible'
+  raw_non_combustible = clean_values.isin(['non combustible', 'non-combustible'])
+
   converted_material = fire_gdf[property_name].astype(str).apply(get_material)
 
   return {
-    'combustible': len(fire_gdf[converted_material.isin(combustible_materials)]),
-    'non-combustible': len(fire_gdf[converted_material.isin(non_combustible_materials)]),
-    'n/a': len(fire_gdf[converted_material == 'n/a']),
+    'combustible': len(fire_gdf[raw_combustible | converted_material.isin(combustible_materials)]),
+    'non-combustible': len(fire_gdf[raw_non_combustible | converted_material.isin(non_combustible_materials)]),
+    'n/a': len(fire_gdf[(converted_material == 'n/a') & ~raw_combustible & ~raw_non_combustible]),
   }
 
 
