@@ -167,7 +167,8 @@ def apply_damage_features(fire_name = ''):
 
 def apply_material_features(fire_name = ''):
   if fire_name != '':
-    material_ax.set_title('structural composition and material', y=0.85)
+    # material_ax.set_title('structural composition and material', y=0.85)
+    pass
 
   material_ax.axis('off')
 
@@ -198,7 +199,7 @@ def make_main_window(input_figure):
 
   fig = input_figure
 
-  fig.canvas.manager.set_window_title('Damage Window')
+  fig.canvas.manager.set_window_title('cal fire structure data')
   structural_elements_text = fig.text(
     structural_elements_position[0],
     structural_elements_position[1],
