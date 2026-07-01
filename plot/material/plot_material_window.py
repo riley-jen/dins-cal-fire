@@ -2,12 +2,13 @@ import matplotlib.pyplot as plt
 from matplotlib.widgets import Button, CheckButtons
 
 import extract_structure_data
-from material.plot_material import show_fire_material
+from material.plot_material import show_fire_material, show_structure_element_table
 
 
 # --- VARIABLES ---
 fig = None
 material_ax = None
+structure_element_axes = {}
 total_text = None
 buttons = []
 damage_boxes = []
@@ -17,6 +18,12 @@ displayed_damages = extract_structure_data.damage_list.copy()
 current_fire_name = None
 
 table_position = [0.1, 0.55, 0.8, 0.34]
+structure_element_table_positions = {
+  'patio_fence_table': [0.64, 0.480, 0.30, 0.080],
+  'eaves_table': [0.64, 0.380, 0.30, 0.080],
+  'ventscreen_table': [0.64, 0.265, 0.30, 0.095],
+  'windowpane_table': [0.64, 0.165, 0.30, 0.080],
+}
 
 
 # --- MAIN FUNCTIONS ---
@@ -30,6 +37,7 @@ def plot_fire_material(fire_name, displayed_damages):
   current_fire_name = fire_name
 
   material_ax.clear()
+  clear_structure_element_axes()
 
   structure_data = structure_data_by_fire[fire_name]
   displayed_gdf = extract_structure_data.get_gdf_for_damages(
@@ -38,8 +46,10 @@ def plot_fire_material(fire_name, displayed_damages):
   )
   filtered_structure_data = structure_data.copy()
   filtered_structure_data['material_table'] = extract_structure_data.get_material_table(displayed_gdf)
+  filtered_structure_data['structure_element_tables'] = extract_structure_data.get_structure_element_tables(displayed_gdf)
 
   show_fire_material(material_ax, filtered_structure_data)
+  show_structure_element_tables(filtered_structure_data)
 
   update_total_count(len(displayed_gdf))
   apply_base_features(fire_name)
@@ -106,11 +116,28 @@ def apply_base_features(fire_name = ''):
 
   material_ax.axis('off')
 
+  for table_ax in structure_element_axes.values():
+    table_ax.axis('off')
+
+
+def clear_structure_element_axes():
+  for table_ax in structure_element_axes.values():
+    table_ax.clear()
+
+
+def show_structure_element_tables(structure_data):
+  for table_key in structure_element_table_positions:
+    df_clean = structure_data['structure_element_tables'][table_key]
+    show_structure_element_table(
+      structure_element_axes[table_key],
+      df_clean
+    )
+
 
 # --- SET UP ---
 
 def make_material_window(input_figure):
-  global fig, material_ax, total_text, buttons, damage_boxes
+  global fig, material_ax, structure_element_axes, total_text, buttons, damage_boxes
   preload_data()
 
   fig = input_figure
@@ -118,6 +145,10 @@ def make_material_window(input_figure):
   fig.canvas.manager.set_window_title('Material Window')
   total_text = fig.text(0.5, 0.985, 'total structures: 0', ha='center', va='top', fontsize=13)
   material_ax = fig.add_axes(table_position)
+  structure_element_axes = {
+    table_key: fig.add_axes(position)
+    for table_key, position in structure_element_table_positions.items()
+  }
   
   buttons = []
   damage_boxes = []

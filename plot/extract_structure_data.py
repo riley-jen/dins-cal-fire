@@ -98,6 +98,106 @@ def get_material_table_for_damages(damage_gdfs, displayed_damages):
   return get_material_table(damage_gdf)
 
 
+# --- STRUCTURE ELEMENT DATA ---
+structure_element_table_configs = [
+  {
+    'key': 'eaves_table',
+    'columns': ['build', 'eaves'],
+    'properties': ['EAVES'],
+    'rows': ['enclosed', 'unenclosed', 'n/a'],
+    'row_map': {
+      'enclosed': 'enclosed',
+      'unenclosed': 'unenclosed',
+      'no eaves': 'n/a',
+      'unknown': 'n/a',
+    },
+  },
+  {
+    'key': 'ventscreen_table',
+    'columns': ['build', 'mesh screen'],
+    'properties': ['VENTSCREEN'],
+    'rows': ['<= 1/8"', '> 1/8"', 'unscreened', 'n/a'],
+    'row_map': {
+      'mesh screen <= 1/8"': '<= 1/8"',
+      'mesh screen > 1/8"': '> 1/8"',
+      'unscreened': 'unscreened',
+      'no vents': 'n/a',
+      'unknown': 'n/a',
+    },
+  },
+  {
+    'key': 'windowpane_table',
+    'columns': ['build', 'window pane'],
+    'properties': ['WINDOWPANE'],
+    'rows': ['single pane', 'multi pane', 'n/a'],
+    'row_map': {
+      'single pane': 'single pane',
+      'multi pane': 'multi pane',
+      'no windows': 'n/a',
+      'unknown': 'n/a',
+    },
+  },
+  {
+    'key': 'patio_fence_table',
+    'columns': ['build', 'patio cover', 'fence'],
+    'properties': ['PATIOCOVERCARPORT', 'FENCEATTACHEDTOSTRUCTURE'],
+    'rows': ['combustible', 'non-combustible', 'n/a'],
+    'row_map': {
+      'combustible': 'combustible',
+      'non combustible': 'non-combustible',
+      'non-combustible': 'non-combustible',
+      'no patio cover carport': 'n/a',
+      'no patio cover/carport': 'n/a',
+      'no fence': 'n/a',
+      'unknown': 'n/a',
+    },
+  },
+]
+
+
+def clean_structure_element_value(value):
+  return str(value).strip().lower()
+
+
+def get_structure_element_row(value, config):
+  clean_value = clean_structure_element_value(value)
+
+  if clean_value in config['row_map']:
+    return config['row_map'][clean_value]
+
+  clean_value_no_slash = clean_value.replace('/', ' ')
+  if clean_value_no_slash in config['row_map']:
+    return config['row_map'][clean_value_no_slash]
+
+  return 'n/a'
+
+
+def get_structure_element_table(fire_gdf, config):
+  table_values = {}
+
+  for property_name in config['properties']:
+    rows = {row: 0 for row in config['rows']}
+    converted_values = fire_gdf[property_name].apply(lambda value: get_structure_element_row(value, config))
+
+    for row in config['rows']:
+      rows[row] = len(fire_gdf[converted_values == row])
+
+    table_values[property_name] = rows
+
+  df = pd.DataFrame(table_values)
+  df_clean = df.reset_index()
+  df_clean.columns = config['columns']
+
+  return df_clean
+
+
+def get_structure_element_tables(fire_gdf):
+  return {
+    config['key']: get_structure_element_table(fire_gdf, config)
+    for config in structure_element_table_configs
+  }
+
+
 # --- META FUNCTION ---
 def get_data(fire_name):
   fire_gdf = get_fire_gdf(fire_name)
@@ -109,6 +209,7 @@ def get_data(fire_name):
     'damage_gdfs': damage_data['damage_gdfs'],
     'total': damage_data['total'],
     'material_table': get_material_table(fire_gdf),
+    'structure_element_tables': get_structure_element_tables(fire_gdf),
     'damage_list': damage_list,
     'damage_display_list': damage_display_list,
     'damage_display_dict': damage_display_dict,
