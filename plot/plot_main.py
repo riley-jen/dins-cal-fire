@@ -61,14 +61,11 @@ def plot_fire(fire_name):
   global current_fire_name
   current_fire_name = fire_name
 
-  plot_fire_damage(fire_name)
-  plot_fire_material(fire_name)
-  plt.draw()
-
-
-def plot_fire_damage(fire_name):
   map_ax.clear()
   pie_ax.clear()
+  material_ax.clear()
+  bar_ax.clear()
+  clear_structure_element_axes()
 
   structure_data = structure_data_by_fire[fire_name]
   perimeter_data = perimeter_data_by_fire[fire_name]
@@ -76,14 +73,6 @@ def plot_fire_damage(fire_name):
   show_fire_map(map_ax, structure_data, perimeter_data, damage_map_position)
   show_damage_pie(pie_ax, structure_data, pie_legend_anchor)
   apply_damage_features(fire_name)
-
-
-def plot_fire_material(fire_name):
-  material_ax.clear()
-  bar_ax.clear()
-  clear_structure_element_axes()
-
-  structure_data = structure_data_by_fire[fire_name]
   displayed_gdf = extract_structure_data.get_gdf_for_damages(
     structure_data['damage_gdfs'],
     displayed_damages
@@ -97,6 +86,7 @@ def plot_fire_material(fire_name):
   show_structure_element_tables(filtered_structure_data)
 
   apply_material_features(fire_name)
+  plt.draw()
 
 
 def make_fire_buttons(buttons, fires_list):
@@ -148,8 +138,7 @@ def toggle_damage(damage):
     displayed_damages.append(damage)
 
   if current_fire_name is not None:
-    plot_fire_material(current_fire_name)
-    plt.draw()
+    plot_fire(current_fire_name)
 
 
 def apply_damage_features(fire_name = ''):
