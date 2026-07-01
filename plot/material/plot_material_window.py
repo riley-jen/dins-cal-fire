@@ -1,3 +1,8 @@
+'''
+this program creates the interactive material window
+it wires together fire buttons, damage checkboxes, and the material tables
+'''
+
 import matplotlib.pyplot as plt
 from matplotlib.widgets import Button, CheckButtons
 
@@ -27,11 +32,19 @@ structure_element_table_positions = {
 
 
 # --- MAIN FUNCTIONS ---
+'''
+loads structure data for all fires before any buttons are clicked
+this keeps the window from rereading the geojson on every redraw
+'''
 def preload_data():
   for fire_name in fires_list:
     structure_data_by_fire[fire_name] = extract_structure_data.get_data(fire_name)
 
 
+'''
+redraws all material-window tables for one fire and selected damages
+this is called when a fire button or damage checkbox changes
+'''
 def plot_fire_material(fire_name, displayed_damages):
   global current_fire_name
   current_fire_name = fire_name
@@ -48,6 +61,7 @@ def plot_fire_material(fire_name, displayed_damages):
   filtered_structure_data['material_table'] = extract_structure_data.get_material_table(displayed_gdf)
   filtered_structure_data['structure_element_tables'] = extract_structure_data.get_structure_element_tables(displayed_gdf)
 
+  # both table groups use the same filtered structures
   show_fire_material(material_ax, filtered_structure_data)
   show_structure_element_tables(filtered_structure_data)
 
@@ -55,7 +69,10 @@ def plot_fire_material(fire_name, displayed_damages):
   apply_base_features(fire_name)
   plt.draw()
 
-# make buttons for selecting fire
+'''
+makes buttons for selecting fire
+each button redraws the window with the current damage filters
+'''
 def make_fire_buttons(buttons, fires_list):
   nf = len(fires_list)
 
@@ -72,6 +89,10 @@ def make_fire_buttons(buttons, fires_list):
   
   return buttons
 
+'''
+makes checkboxes for filtering by damage type
+the checkbox label color matches the damage color
+'''
 def make_damage_boxes(boxes, damage_list):
   nd = len(damage_list)
     
@@ -95,6 +116,10 @@ def make_damage_boxes(boxes, damage_list):
   return boxes
 
 
+'''
+turns one damage filter on or off
+if a fire is already selected, the window redraws right away
+'''
 def toggle_damage(damage):
   if damage in displayed_damages:
     displayed_damages.remove(damage)
@@ -107,9 +132,17 @@ def toggle_damage(damage):
 
 # --- HELPER FUNCTIONS ---
 
+'''
+updates the total structure count shown at the top of the window
+the count changes with fire and damage filters
+'''
 def update_total_count(total):
   total_text.set_text('total structures: ' + str(total))
 
+'''
+applies titles and turns axes off after drawing tables
+matplotlib tables still need axes, even though the axes are hidden
+'''
 def apply_base_features(fire_name = ''):
   if fire_name != '':
     material_ax.set_title('structural composition and material', y=0.85)
@@ -120,11 +153,19 @@ def apply_base_features(fire_name = ''):
     table_ax.axis('off')
 
 
+'''
+clears the smaller structure element table axes
+this prevents old table text from staying behind on redraw
+'''
 def clear_structure_element_axes():
   for table_ax in structure_element_axes.values():
     table_ax.clear()
 
 
+'''
+draws the combustibility and structure element tables
+the order follows the position dictionary at the top of the file
+'''
 def show_structure_element_tables(structure_data):
   for table_key in structure_element_table_positions:
     df_clean = structure_data['structure_element_tables'][table_key]
@@ -136,6 +177,10 @@ def show_structure_element_tables(structure_data):
 
 # --- SET UP ---
 
+'''
+sets up the material window on the given figure
+this creates axes, buttons, checkboxes, and the initial empty layout
+'''
 def make_material_window(input_figure):
   global fig, material_ax, structure_element_axes, total_text, buttons, damage_boxes
   preload_data()
