@@ -7,12 +7,14 @@ import matplotlib.pyplot as plt
 from matplotlib.widgets import Button, CheckButtons
 
 import extract_structure_data
+from material.plot_bar import show_material_bar_chart
 from material.plot_table import show_fire_material, show_structure_element_table
 
 
 # --- VARIABLES ---
 fig = None
 material_ax = None
+bar_ax = None
 structure_element_axes = {}
 total_text = None
 buttons = []
@@ -23,6 +25,7 @@ displayed_damages = extract_structure_data.damage_list.copy()
 current_fire_name = None
 
 table_position = [0.1, 0.55, 0.8, 0.34]
+bar_position = [0.15, 0.155, 0.46, 0.28]
 structure_element_table_positions = {
   'patio_fence_table': [0.1, 0.465, 0.8, 0.080],
   'eaves_table': [0.64, 0.355, 0.30, 0.080],
@@ -50,6 +53,7 @@ def plot_fire_material(fire_name, displayed_damages):
   current_fire_name = fire_name
 
   material_ax.clear()
+  bar_ax.clear()
   clear_structure_element_axes()
 
   structure_data = structure_data_by_fire[fire_name]
@@ -63,6 +67,7 @@ def plot_fire_material(fire_name, displayed_damages):
 
   # both table groups use the same filtered structures
   show_fire_material(material_ax, filtered_structure_data)
+  show_material_bar_chart(bar_ax, filtered_structure_data)
   show_structure_element_tables(filtered_structure_data)
 
   update_total_count(len(displayed_gdf))
@@ -182,7 +187,7 @@ sets up the material window on the given figure
 this creates axes, buttons, checkboxes, and the initial empty layout
 '''
 def make_material_window(input_figure):
-  global fig, material_ax, structure_element_axes, total_text, buttons, damage_boxes
+  global fig, material_ax, bar_ax, structure_element_axes, total_text, buttons, damage_boxes
   preload_data()
 
   fig = input_figure
@@ -190,6 +195,7 @@ def make_material_window(input_figure):
   fig.canvas.manager.set_window_title('Material Window')
   total_text = fig.text(0.5, 0.985, 'total structures: 0', ha='center', va='top', fontsize=13)
   material_ax = fig.add_axes(table_position)
+  bar_ax = fig.add_axes(bar_position)
   structure_element_axes = {
     table_key: fig.add_axes(position)
     for table_key, position in structure_element_table_positions.items()
@@ -201,3 +207,4 @@ def make_material_window(input_figure):
   make_fire_buttons(buttons, fires_list)
 
   apply_base_features()
+  bar_ax.axis('off')
