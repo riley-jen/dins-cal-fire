@@ -24,25 +24,6 @@ def show_fire_structures(map_ax, structure_data):
     if len(damage_gdf) > 0:
       damage_gdf.plot(ax=map_ax, categorical=True, markersize=2, label=damage, color=color, alpha=0.8, zorder=2)
 
-  make_map_legend(map_ax, structure_data['damage_list'])
-
-
-def make_map_legend(ax, damage_list):
-  handles, labels = ax.get_legend_handles_labels()
-  legend_lookup = dict(zip([label.lower() for label in labels], handles))
-
-  sorted_handles = []
-  sorted_labels = []
-  
-  for damage in damage_list:
-    if damage in labels:
-      sorted_labels.append(damage)
-      sorted_handles.append(legend_lookup[damage])
-    
-  ax.legend(sorted_handles, sorted_labels, markerscale=3, title='Damage Rating', loc='upper right', 
-    bbox_to_anchor=(0.96, 0.95), bbox_transform=ax.figure.transFigure, frameon=True, facecolor='white')
-
-
 # --- PERIMETER LAYER ---
 def show_fire_perimeter(ax, perimeter_data):
   perimeter_gdf = perimeter_data['perimeter_gdf']
@@ -65,7 +46,8 @@ def fit_map_bounds(ax, map_position):
   y_min, y_max = ax.get_ylim()
   x_center, y_center = (x_min + x_max) / 2, (y_min + y_max) / 2
   width, height = x_max - x_min, y_max - y_min
-  target_ratio = map_position[2] / map_position[3]
+  fig_width, fig_height = ax.figure.get_size_inches()
+  target_ratio = (map_position[2] * fig_width) / (map_position[3] * fig_height)
 
   if width / height < target_ratio:
     width = height * target_ratio
