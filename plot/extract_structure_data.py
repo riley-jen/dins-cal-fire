@@ -77,6 +77,42 @@ def get_material(string):
   return 'n/a'
 
 
+def get_rounded_percentages(counts):
+  total = sum(counts)
+
+  if total == 0:
+    return [0 for count in counts]
+
+  exact_percentages = [(count / total) * 100 for count in counts]
+  rounded_percentages = [int(percentage) for percentage in exact_percentages]
+  remainder = 100 - sum(rounded_percentages)
+  fractional_order = sorted(
+    range(len(counts)),
+    key=lambda index: exact_percentages[index] - rounded_percentages[index],
+    reverse=True
+  )
+
+  for index in fractional_order[:remainder]:
+    rounded_percentages[index] += 1
+
+  return rounded_percentages
+
+
+def format_count_percent_table(df_clean):
+  formatted_df = df_clean.copy()
+
+  for column in formatted_df.columns[1:]:
+    counts = [int(count) for count in formatted_df[column]]
+    percentages = get_rounded_percentages(counts)
+
+    formatted_df[column] = [
+      str(count) + ' (' + str(percent) + '%)'
+      for count, percent in zip(counts, percentages)
+    ]
+
+  return formatted_df
+
+
 def get_material_table(fire_gdf):
   table_values = {element: {material: 0 for material in materials} for element in building_elements}
 
@@ -92,7 +128,7 @@ def get_material_table(fire_gdf):
   df_clean = df_clean.rename(columns={'index': 'Elements'})
   df_clean.columns = building_elements_display
 
-  return df_clean
+  return format_count_percent_table(df_clean)
 
 
 def get_material_table_for_damages(damage_gdfs, displayed_damages):
@@ -190,7 +226,7 @@ def get_structure_element_table(fire_gdf, config):
   df_clean = df.reset_index()
   df_clean.columns = config['columns']
 
-  return df_clean
+  return format_count_percent_table(df_clean)
 
 
 def get_material_combustibility_counts(fire_gdf, property_name):
@@ -228,7 +264,7 @@ def get_combustibility_table(fire_gdf):
   df_clean = df.reset_index()
   df_clean.columns = ['combustibility', 'roof', 'side', 'ground deck', 'elevated deck', 'patio cover', 'fence']
 
-  return df_clean
+  return format_count_percent_table(df_clean)
 
 
 def get_structure_element_tables(fire_gdf):
