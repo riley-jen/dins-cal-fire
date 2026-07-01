@@ -4,9 +4,9 @@ import matplotlib.pyplot as plt
 
 
 # --- MAIN FUNCTIONS ---
-def show_fire_map(map_ax, structure_data, perimeter_data, map_position):
+def show_fire_map(map_ax, structure_data, perimeter_data, map_position, displayed_damages = None):
   set_map_position(map_ax, map_position)
-  show_fire_structures(map_ax, structure_data)
+  show_fire_structures(map_ax, structure_data, displayed_damages)
   show_fire_perimeter(map_ax, perimeter_data)
   fit_map_bounds(map_ax, map_position)
   ctx.add_basemap(map_ax, source=ctx.providers.OpenStreetMap.Mapnik, zorder=1)
@@ -14,11 +14,16 @@ def show_fire_map(map_ax, structure_data, perimeter_data, map_position):
 
 
 # --- STRUCTURE LAYER ---
-def show_fire_structures(map_ax, structure_data):
+def show_fire_structures(map_ax, structure_data, displayed_damages = None):
   damage_gdfs = structure_data['damage_gdfs']
   color_dict = structure_data['color_dict']
+  if displayed_damages is None:
+    displayed_damages = structure_data['damage_list']
 
   for damage, color in color_dict.items():
+    if damage not in displayed_damages:
+      continue
+
     damage_gdf = damage_gdfs[damage]
 
     if len(damage_gdf) > 0:

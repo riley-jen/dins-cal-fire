@@ -70,8 +70,8 @@ def plot_fire(fire_name):
   structure_data = structure_data_by_fire[fire_name]
   perimeter_data = perimeter_data_by_fire[fire_name]
 
-  show_fire_map(map_ax, structure_data, perimeter_data, damage_map_position)
-  show_damage_pie(pie_ax, structure_data, pie_legend_anchor)
+  show_fire_map(map_ax, structure_data, perimeter_data, damage_map_position, displayed_damages)
+  show_damage_pie(pie_ax, structure_data, pie_legend_anchor, displayed_damages)
   apply_damage_features(fire_name)
   displayed_gdf = extract_structure_data.get_gdf_for_damages(
     structure_data['damage_gdfs'],
