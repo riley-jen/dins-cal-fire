@@ -19,10 +19,10 @@ current_fire_name = None
 
 table_position = [0.1, 0.55, 0.8, 0.34]
 structure_element_table_positions = {
-  'patio_fence_table': [0.64, 0.480, 0.30, 0.080],
-  'eaves_table': [0.64, 0.380, 0.30, 0.080],
-  'ventscreen_table': [0.64, 0.265, 0.30, 0.095],
-  'windowpane_table': [0.64, 0.165, 0.30, 0.080],
+  'patio_fence_table': [0.1, 0.465, 0.8, 0.080],
+  'eaves_table': [0.64, 0.355, 0.30, 0.080],
+  'ventscreen_table': [0.64, 0.240, 0.30, 0.095],
+  'windowpane_table': [0.64, 0.140, 0.30, 0.080],
 }
 
 

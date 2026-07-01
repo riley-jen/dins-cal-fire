@@ -57,6 +57,8 @@ def get_gdf_for_damages(damage_gdfs, displayed_damages):
 materials = ['asphalt', 'composite', 'masonry', 'metal', 'tile', 'vinyl', 'wood', 'n/a']
 building_elements = ['ROOFCONSTRUCTION', 'EXTERIORSIDING', 'DECKPORCHONGRADE', 'DECKPORCHELEVATED']
 building_elements_display = ['material', 'roof', 'side', 'ground deck', 'elevated deck']
+combustible_materials = ['asphalt', 'composite', 'vinyl', 'wood']
+non_combustible_materials = ['masonry', 'metal', 'tile']
 
 
 def get_material(string):
@@ -191,11 +193,54 @@ def get_structure_element_table(fire_gdf, config):
   return df_clean
 
 
-def get_structure_element_tables(fire_gdf):
+def get_material_combustibility_counts(fire_gdf, property_name):
+  converted_material = fire_gdf[property_name].astype(str).apply(get_material)
+
   return {
-    config['key']: get_structure_element_table(fire_gdf, config)
-    for config in structure_element_table_configs
+    'combustible': len(fire_gdf[converted_material.isin(combustible_materials)]),
+    'non-combustible': len(fire_gdf[converted_material.isin(non_combustible_materials)]),
+    'n/a': len(fire_gdf[converted_material == 'n/a']),
   }
+
+
+def get_combustibility_table(fire_gdf):
+  table_values = {
+    'ROOFCONSTRUCTION': get_material_combustibility_counts(fire_gdf, 'ROOFCONSTRUCTION'),
+    'EXTERIORSIDING': get_material_combustibility_counts(fire_gdf, 'EXTERIORSIDING'),
+    'DECKPORCHONGRADE': get_material_combustibility_counts(fire_gdf, 'DECKPORCHONGRADE'),
+    'DECKPORCHELEVATED': get_material_combustibility_counts(fire_gdf, 'DECKPORCHELEVATED'),
+  }
+
+  patio_fence_config = next(
+    config for config in structure_element_table_configs
+    if config['key'] == 'patio_fence_table'
+  )
+  for property_name in patio_fence_config['properties']:
+    rows = {row: 0 for row in patio_fence_config['rows']}
+    converted_values = fire_gdf[property_name].apply(lambda value: get_structure_element_row(value, patio_fence_config))
+
+    for row in patio_fence_config['rows']:
+      rows[row] = len(fire_gdf[converted_values == row])
+
+    table_values[property_name] = rows
+
+  df = pd.DataFrame(table_values)
+  df_clean = df.reset_index()
+  df_clean.columns = ['combustibility', 'roof', 'side', 'ground deck', 'elevated deck', 'patio cover', 'fence']
+
+  return df_clean
+
+
+def get_structure_element_tables(fire_gdf):
+  tables = {}
+
+  for config in structure_element_table_configs:
+    if config['key'] == 'patio_fence_table':
+      tables[config['key']] = get_combustibility_table(fire_gdf)
+    else:
+      tables[config['key']] = get_structure_element_table(fire_gdf, config)
+
+  return tables
 
 
 # --- META FUNCTION ---
