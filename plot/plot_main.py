@@ -6,7 +6,7 @@ import extract_perimeter_data
 from subplot.plot_bar import show_material_bar_chart
 from subplot.plot_map import show_fire_map
 from subplot.plot_pie import show_damage_pie
-from subplot.plot_table import show_fire_material, show_structure_element_table
+from subplot.plot_table import show_table, show_structure_element_table
 
 
 # --- VARIABLES ---
@@ -21,7 +21,7 @@ current_fire_name = None
 
 map_ax = None
 pie_ax = None
-material_ax = None
+table_ax = None
 bar_ax = None
 structure_element_axes = {}
 structural_elements_text = None
@@ -39,7 +39,7 @@ damage_box_width = 0.11
 damage_box_height = 0.035
 damage_box_space = 0.006
 
-material_table_position = [0.55, 0.465, 0.4, 0.34]
+table_position = [0.55, 0.465, 0.4, 0.34]
 material_bar_position = [0.575, 0.155, 0.23, 0.28]
 material_structure_element_table_positions = {
   'patio_fence_table': [0.55, 0.8, 0.4, 0.080],
@@ -63,7 +63,7 @@ def plot_fire(fire_name):
 
   map_ax.clear()
   pie_ax.clear()
-  material_ax.clear()
+  table_ax.clear()
   bar_ax.clear()
   clear_structure_element_axes()
 
@@ -81,7 +81,7 @@ def plot_fire(fire_name):
   filtered_structure_data['material_table'] = extract_structure_data.get_material_table(displayed_gdf)
   filtered_structure_data['structure_element_tables'] = extract_structure_data.get_structure_element_tables(displayed_gdf)
 
-  show_fire_material(material_ax, filtered_structure_data)
+  show_table(table_ax, filtered_structure_data)
   show_material_bar_chart(bar_ax, filtered_structure_data)
   show_structure_element_tables(filtered_structure_data)
 
@@ -156,18 +156,18 @@ def apply_damage_features(fire_name = ''):
 
 def apply_material_features(fire_name = ''):
   if fire_name != '':
-    # material_ax.set_title('structural composition and material', y=0.85)
+    # table_ax.set_title('structural composition and material', y=0.85)
     pass
 
-  material_ax.axis('off')
+  table_ax.axis('off')
 
-  for table_ax in structure_element_axes.values():
-    table_ax.axis('off')
+  for structure_element_ax in structure_element_axes.values():
+    structure_element_ax.axis('off')
 
 
 def clear_structure_element_axes():
-  for table_ax in structure_element_axes.values():
-    table_ax.clear()
+  for structure_element_ax in structure_element_axes.values():
+    structure_element_ax.clear()
 
 
 def show_structure_element_tables(structure_data):
@@ -181,7 +181,7 @@ def show_structure_element_tables(structure_data):
 
 # --- SET UP ---
 def make_main_window(input_figure):
-  global fig, map_ax, pie_ax, material_ax, bar_ax, structure_element_axes
+  global fig, map_ax, pie_ax, table_ax, bar_ax, structure_element_axes
   global structural_elements_text, buttons, damage_boxes
 
   preload_data()
@@ -199,7 +199,7 @@ def make_main_window(input_figure):
   )
   map_ax = fig.add_axes(damage_map_position)
   pie_ax = fig.add_axes(damage_pie_position)
-  material_ax = fig.add_axes(material_table_position)
+  table_ax = fig.add_axes(table_position)
   bar_ax = fig.add_axes(material_bar_position)
   structure_element_axes = {
     table_key: fig.add_axes(position)
