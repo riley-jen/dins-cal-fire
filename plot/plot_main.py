@@ -6,6 +6,7 @@ import extract_perimeter_data
 from subplot.plot_bar import show_material_bar_chart
 from subplot.plot_map import show_fire_map
 from subplot.plot_pie import show_damage_pie
+from subplot.plot_sampling import show_sampling_scatter
 from subplot.plot_table import show_table, show_structure_element_table
 
 
@@ -21,6 +22,7 @@ current_fire_name = None
 
 map_ax = None
 pie_ax = None
+sampling_ax = None
 table_ax = None
 bar_ax = None
 structure_element_axes = {}
@@ -28,6 +30,7 @@ structural_elements_text = None
 
 damage_map_position = [0.03, 0.50, 0.33, 0.44]
 damage_pie_position = [0.35, 0.1, 0.12, 0.38]
+damage_sampling_position = [0.075, 0.15, 0.27, 0.28]
 pie_legend_anchor = [0.48, 0.5]
 damage_button_left = 0.05
 damage_button_bottom = 0.05
@@ -63,6 +66,7 @@ def plot_fire(fire_name):
 
   map_ax.clear()
   pie_ax.clear()
+  sampling_ax.clear()
   table_ax.clear()
   bar_ax.clear()
   clear_structure_element_axes()
@@ -72,6 +76,7 @@ def plot_fire(fire_name):
 
   show_fire_map(map_ax, structure_data, perimeter_data, damage_map_position, displayed_damages)
   show_damage_pie(pie_ax, structure_data, pie_legend_anchor, displayed_damages)
+  show_sampling_scatter(sampling_ax, fire_name)
   apply_damage_features(fire_name)
   displayed_gdf = extract_structure_data.get_gdf_for_damages(
     structure_data['damage_gdfs'],
@@ -153,6 +158,9 @@ def apply_damage_features(fire_name = ''):
 
   pie_ax.axis('off')
 
+  if fire_name == '':
+    sampling_ax.axis('off')
+
 
 def apply_material_features(fire_name = ''):
   if fire_name != '':
@@ -181,7 +189,7 @@ def show_structure_element_tables(structure_data):
 
 # --- SET UP ---
 def make_main_window(input_figure):
-  global fig, map_ax, pie_ax, table_ax, bar_ax, structure_element_axes
+  global fig, map_ax, pie_ax, sampling_ax, table_ax, bar_ax, structure_element_axes
   global structural_elements_text, buttons, damage_boxes
 
   preload_data()
@@ -199,6 +207,7 @@ def make_main_window(input_figure):
   )
   map_ax = fig.add_axes(damage_map_position)
   pie_ax = fig.add_axes(damage_pie_position)
+  sampling_ax = fig.add_axes(damage_sampling_position)
   table_ax = fig.add_axes(table_position)
   bar_ax = fig.add_axes(material_bar_position)
   structure_element_axes = {
