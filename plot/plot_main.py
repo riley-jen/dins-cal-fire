@@ -43,9 +43,9 @@ damage_box_height = 0.035
 damage_box_space = 0.006
 
 table_position = [0.55, 0.465, 0.4, 0.34]
-material_bar_position = [0.575, 0.155, 0.23, 0.28]
+material_bar_position = [0.525, 0.2, 0.275, 0.28]
 material_structure_element_table_positions = {
-  'patio_fence_table': [0.55, 0.8, 0.4, 0.080],
+  'patio_fence_table': [0.55, 0.83, 0.4, 0.080],
   'eaves_table': [0.82, 0.355, 0.15, 0.080],
   'ventscreen_table': [0.82, 0.240, 0.15, 0.095],
   'windowpane_table': [0.82, 0.140, 0.15, 0.080],
@@ -148,7 +148,7 @@ def toggle_damage(damage):
 
 def apply_damage_features(fire_name = ''):
   if fire_name != '':
-    map_ax.set_title('california fire: ' + fire_name)
+    map_ax.set_title(fire_name + ' fire structures map')
     pie_ax.set_title('damaged structures\ndistribution')
   else:
     map_ax.set_title('california fire')
@@ -164,7 +164,7 @@ def apply_damage_features(fire_name = ''):
 
 def apply_material_features(fire_name = ''):
   if fire_name != '':
-    # table_ax.set_title('structural composition and material', y=0.85)
+    table_ax.set_title('structural composition and material', y=0.85)
     pass
 
   table_ax.axis('off')
@@ -185,6 +185,8 @@ def show_structure_element_tables(structure_data):
       structure_element_axes[table_key],
       df_clean
     )
+    if table_key == 'patio_fence_table':
+      structure_element_axes[table_key].set_title('combustibility', y=1.15)
 
 
 # --- SET UP ---
@@ -197,14 +199,7 @@ def make_main_window(input_figure):
   fig = input_figure
 
   fig.canvas.manager.set_window_title('cal fire structure data')
-  structural_elements_text = fig.text(
-    structural_elements_position[0],
-    structural_elements_position[1],
-    'structural elements',
-    ha='center',
-    va='top',
-    fontsize=13,
-  )
+
   map_ax = fig.add_axes(damage_map_position)
   pie_ax = fig.add_axes(damage_pie_position)
   sampling_ax = fig.add_axes(damage_sampling_position)

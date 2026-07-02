@@ -83,8 +83,8 @@ def show_material_bar_chart(bar_ax, structure_data):
   bar_ax.legend(
     handles=legend_handles,
     loc='lower center',
-    bbox_to_anchor=(0.5, -0.2),
+    bbox_to_anchor=(0.5, -0.25),
     ncol=4,
-    fontsize=7,
+    fontsize=9,
     frameon=False,
   )
