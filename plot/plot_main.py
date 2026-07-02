@@ -7,7 +7,7 @@ from subplot.plot_bar import show_material_bar_chart
 from subplot.plot_map import show_fire_map
 from subplot.plot_pie import show_damage_pie
 from subplot.plot_sampling import show_sampling_scatter
-from subplot.plot_table import show_table, show_structure_element_table
+from subplot.plot_table import show_combustibility_table, show_table, show_structure_element_table
 
 
 # --- VARIABLES ---
@@ -25,8 +25,8 @@ pie_ax = None
 sampling_ax = None
 table_ax = None
 bar_ax = None
+combustibility_ax = None
 structure_element_axes = {}
-structural_elements_text = None
 
 damage_map_position = [0.03, 0.50, 0.33, 0.44]
 damage_pie_position = [0.35, 0.1, 0.12, 0.38]
@@ -35,13 +35,12 @@ pie_legend_anchor = [0.48, 0.5]
 
 table_position = [0.55, 0.465, 0.4, 0.34]
 material_bar_position = [0.525, 0.2, 0.275, 0.28]
+combustibility_table_position = [0.55, 0.83, 0.4, 0.080]
 material_structure_element_table_positions = {
-  'patio_fence_table': [0.55, 0.83, 0.4, 0.080],
   'eaves_table': [0.82, 0.355, 0.15, 0.080],
   'ventscreen_table': [0.82, 0.240, 0.15, 0.095],
   'windowpane_table': [0.82, 0.140, 0.15, 0.080],
 }
-structural_elements_position = [0.75, 0.985]
 
 
 # --- MAIN FUNCTIONS ---
@@ -60,6 +59,7 @@ def plot_fire(fire_name):
   sampling_ax.clear()
   table_ax.clear()
   bar_ax.clear()
+  combustibility_ax.clear()
   clear_structure_element_axes()
 
   structure_data = structure_data_by_fire[fire_name]
@@ -79,6 +79,7 @@ def plot_fire(fire_name):
 
   show_table(table_ax, filtered_structure_data)
   show_material_bar_chart(bar_ax, filtered_structure_data)
+  show_combustibility_table(combustibility_ax, filtered_structure_data)
   show_structure_element_tables(filtered_structure_data)
 
   apply_material_features(fire_name)
@@ -105,7 +106,7 @@ def make_fire_buttons(buttons, fires_list):
 def make_damage_boxes(boxes, damage_list):
   for i in range(len(damage_list)):
     damage = damage_list[i]
-    box_space = fig.add_axes([0.37, 0.91 - (0.035 + 0.006) * i, 0.11, 0.35,])
+    box_space = fig.add_axes([0.37, 0.91 - (0.035 + 0.006)*i, 0.11, 0.035])
     box_space.set_frame_on(False)
     box_space.set_xticks([])
     box_space.set_yticks([])
@@ -152,6 +153,7 @@ def apply_material_features(fire_name = ''):
     pass
 
   table_ax.axis('off')
+  combustibility_ax.axis('off')
 
   for structure_element_ax in structure_element_axes.values():
     structure_element_ax.axis('off')
@@ -169,14 +171,14 @@ def show_structure_element_tables(structure_data):
       structure_element_axes[table_key],
       df_clean
     )
-    if table_key == 'patio_fence_table':
-      structure_element_axes[table_key].set_title('combustibility', y=1.15)
+    if table_key == 'eaves_table':
+      structure_element_axes[table_key].set_title('building properties')
 
 
 # --- SET UP ---
 def make_main_window(input_figure):
-  global fig, map_ax, pie_ax, sampling_ax, table_ax, bar_ax, structure_element_axes
-  global structural_elements_text, buttons, damage_boxes
+  global fig, map_ax, pie_ax, sampling_ax, table_ax, bar_ax, combustibility_ax, structure_element_axes
+  global buttons, damage_boxes
 
   preload_data()
 
@@ -189,6 +191,7 @@ def make_main_window(input_figure):
   sampling_ax = fig.add_axes(damage_sampling_position)
   table_ax = fig.add_axes(table_position)
   bar_ax = fig.add_axes(material_bar_position)
+  combustibility_ax = fig.add_axes(combustibility_table_position)
   structure_element_axes = {
     table_key: fig.add_axes(position)
     for table_key, position in material_structure_element_table_positions.items()
