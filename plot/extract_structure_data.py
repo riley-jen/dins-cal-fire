@@ -18,8 +18,6 @@ gdf_base = gdf.to_crs(epsg=3857)
 
 # --- DAMAGE DATA ---
 damage_list = ['no damage', 'affected (>0-10%)', 'minor (10-25%)', 'major (25-50%)', 'destroyed (>50%)', 'inaccessible']
-damage_display_list = ['no damage', 'affected', 'minor', 'major', 'destroyed', 'inaccessible']
-damage_display_dict = dict(zip(damage_list, damage_display_list))
 color_code = ['green', 'gold', 'orange', 'red', 'black', 'gray']
 color_dict = dict(zip(damage_list, color_code))
 
@@ -365,8 +363,6 @@ def get_data(fire_name):
     'material_table': get_material_table(fire_gdf),
     'structure_element_tables': get_structure_element_tables(fire_gdf),
     'damage_list': damage_list,
-    'damage_display_list': damage_display_list,
-    'damage_display_dict': damage_display_dict,
     'color_code': color_code,
     'color_dict': color_dict,
   }
