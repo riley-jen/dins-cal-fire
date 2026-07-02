@@ -32,15 +32,6 @@ damage_map_position = [0.03, 0.50, 0.33, 0.44]
 damage_pie_position = [0.35, 0.1, 0.12, 0.38]
 damage_sampling_position = [0.075, 0.15, 0.27, 0.28]
 pie_legend_anchor = [0.48, 0.5]
-damage_button_left = 0.05
-damage_button_bottom = 0.05
-damage_button_space = 0.0125
-damage_button_width = 0.05625
-damage_box_left = 0.37
-damage_box_top = 0.91
-damage_box_width = 0.11
-damage_box_height = 0.035
-damage_box_space = 0.006
 
 table_position = [0.55, 0.465, 0.4, 0.34]
 material_bar_position = [0.525, 0.2, 0.275, 0.28]
@@ -95,33 +86,26 @@ def plot_fire(fire_name):
 
 
 def make_fire_buttons(buttons, fires_list):
+  nf = len(fires_list)
+
   for i in range(len(fires_list)):
     fire_name = fires_list[i]
 
-    button_space = fig.add_axes([
-      damage_button_left + (damage_button_width + damage_button_space) * i,
-      damage_button_bottom,
-      damage_button_width,
-      0.05,
-    ])
+    space = 0.025
+    width = (1-(0.5+space*(nf-1)))/nf
+    button_space = fig.add_axes([0.25+(width+space)*i, 0.04, width, 0.05]) # left, bottom, width, height
+    
     fire_btn = Button(button_space, fire_name)
     fire_btn.on_clicked(lambda event, name=fire_name: plot_fire(name))
 
     buttons.append(fire_btn)
-
   return buttons
 
 
 def make_damage_boxes(boxes, damage_list):
   for i in range(len(damage_list)):
     damage = damage_list[i]
-
-    box_space = fig.add_axes([
-      damage_box_left,
-      damage_box_top - (damage_box_height + damage_box_space) * i,
-      damage_box_width,
-      damage_box_height,
-    ])
+    box_space = fig.add_axes([0.37, 0.91 - (0.035 + 0.006) * i, 0.11, 0.35,])
     box_space.set_frame_on(False)
     box_space.set_xticks([])
     box_space.set_yticks([])
