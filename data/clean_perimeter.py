@@ -13,7 +13,7 @@ import geopandas as gpd
 
 # set up
 filtered_filename = Path(__file__).resolve().parent.parent / 'files' / 'WFIGS_INTERAGENCY_PERIMETERS_FILTERED_DATA.geojson'
-gdf = gpd.read_file(filtered_filename)
+clean_filename = Path(__file__).resolve().parent.parent / 'files' / 'WFIGS_INTERAGENCY_PERIMETERS_CLEAN_DATA.geojson'
 
 incident_start_dates = [
   ('palisades', datetime(2025, 1, 7)),   # Palisades Fire (Ignited Jan 7, 2025)
@@ -109,6 +109,7 @@ where cleaned by time means every non-null perimeter date included is after the
   official start day for that fire. null perimeter dates are allowed
 '''
 def clean_by_time(gdf):
+  before_count = len(gdf)
   gdf_list = []
 
   for incident, time in incident_start_dates:
@@ -123,7 +124,8 @@ def clean_by_time(gdf):
     time_gdf = fire_gdf[time_check]
     gdf_list.append(time_gdf)
   
-  return gpd.pd.concat(gdf_list, ignore_index=True)
+  clean_gdf = gpd.pd.concat(gdf_list, ignore_index=True)
+  return clean_gdf, (before_count, len(clean_gdf))
 
 
 '''
@@ -132,16 +134,34 @@ where cleaned by distance means every polygon point is less than 200 miles
   from Los Angeles
 '''
 def clean_by_distance(gdf):
-  return gdf[gdf['geometry'].apply(is_close_to_los_angeles)].reset_index(drop=True)
+  before_count = len(gdf)
+  clean_gdf = gdf[gdf['geometry'].apply(is_close_to_los_angeles)].reset_index(drop=True)
+  return clean_gdf, (before_count, len(clean_gdf))
 
 
 # --- file writing ---
-clean_filename = Path(__file__).resolve().parent.parent / 'files' / 'WFIGS_INTERAGENCY_PERIMETERS_CLEAN_DATA.geojson'
-clean_gdf = gdf
-clean_gdf = clean_by_distance(clean_gdf)
-clean_gdf = clean_by_time(clean_gdf)
+def get_count():
+  gdf = gpd.read_file(filtered_filename)
+  clean_gdf, location_count = clean_by_distance(gdf)
+  clean_gdf, time_count = clean_by_time(clean_gdf)
+  return {
+    'location': location_count,
+    'time': time_count
+  }
 
-if clean_filename.exists():
-  clean_filename.unlink()
 
-clean_gdf.to_file(clean_filename, 'GEOJSON')
+def write_main():
+  count = get_count()
+  gdf = gpd.read_file(filtered_filename)
+  clean_gdf, _ = clean_by_distance(gdf)
+  clean_gdf, _ = clean_by_time(clean_gdf)
+
+  if clean_filename.exists():
+    clean_filename.unlink()
+
+  clean_gdf.to_file(clean_filename, 'GEOJSON')
+  return count
+
+
+if __name__ == '__main__':
+  write_main()

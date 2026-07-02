@@ -9,6 +9,7 @@ import json
 import ijson
 import geopandas as gpd
 from decimal import Decimal
+from pathlib import Path
 
 '''
 helper function that returns a dictionary from a list
@@ -21,6 +22,8 @@ def create_dict(list):
 
 select_incidents_list = ['palisades', 'mountain', 'eaton', 'franklin', 'line', 'bridge', 'unspecified']
 select_incidents = create_dict(select_incidents_list)
+raw_filename = Path(__file__).resolve().parents[2] / 'POSTFIRE_MASTER_DATA.geojson'
+clean_filename = Path(__file__).resolve().parent.parent / 'files' / 'POSTFIRE_FILTERED_DATA.geojson'
 
 '''
 function that takes in a .geojson file and returns a list of filtered features given a dictionary
@@ -28,10 +31,12 @@ also updates the counts
 '''
 def read_file(raw_file, filter_dict):
   new_features = []
+  before_count = 0
   with open(raw_file, 'rb') as f:
     features = ijson.items(f,'features.item')
 
     for feature in features:
+      before_count += 1
       properties = feature.get('properties',{})
       incident = properties.get('INCIDENTNAME','').lower()
 
@@ -41,12 +46,7 @@ def read_file(raw_file, filter_dict):
         filter_dict[incident] += 1
         new_features.append(feature)
 
-  return new_features
-
-raw_filename = '../../POSTFIRE_MASTER_DATA.geojson'
-select_features = read_file(raw_filename, select_incidents)
-
-assert (select_incidents['unspecified'] == 0), 'unspecified incidents present!'
+  return new_features, (before_count, len(new_features))
 
 '''
 handles json not being able to serialize decmials... hopefully
@@ -68,5 +68,21 @@ def write_file(new_file, features):
   with open(new_file, 'w') as f:
     json.dump(new_geojson, f, indent = 2, default=decimal_encoder)
 
-clean_filename = '../files/POSTFIRE_FILTERED_DATA.geojson'
-write_file(clean_filename, select_features)
+def get_count():
+  filter_counts = create_dict(select_incidents_list)
+  select_features, count = read_file(raw_filename, filter_counts)
+  assert (filter_counts['unspecified'] == 0), 'unspecified incidents present!'
+  return count
+
+
+def write_main():
+  count = get_count()
+  filter_counts = create_dict(select_incidents_list)
+  select_features, _ = read_file(raw_filename, filter_counts)
+  assert (filter_counts['unspecified'] == 0), 'unspecified incidents present!'
+  write_file(clean_filename, select_features)
+  return count
+
+
+if __name__ == '__main__':
+  write_main()
