@@ -6,11 +6,12 @@ not to be confused with filter_structure.py
 '''
 
 from datetime import datetime
+from pathlib import Path
 import geopandas as gpd
 
 # set up
-filtered_filename = '../files/POSTFIRE_FILTERED_DATA.geojson'
-gdf = gpd.read_file(filtered_filename)
+filtered_filename = Path(__file__).resolve().parent.parent / 'files' / 'POSTFIRE_FILTERED_DATA.geojson'
+clean_filename = Path(__file__).resolve().parent.parent / 'files' / 'POSTFIRE_CLEAN_DATA.geojson'
 
 incident_start_dates = [
   ('palisades', datetime(2025, 1, 7)),   # Palisades Fire (Ignited Jan 7, 2025)
@@ -51,6 +52,7 @@ where cleaned by time means each structure included has INCIDENTSTARTDATE
   within 7 days of the official start day for that fire
 '''
 def clean_by_time(gdf):
+  before_count = len(gdf)
   gdf_list = []
   for incident, time in incident_start_dates:
     fire_gdf = gdf[gdf['INCIDENTNAME'].str.lower() == incident]
@@ -60,14 +62,29 @@ def clean_by_time(gdf):
 
     gdf_list.append(time_gdf)
   
-  return gpd.pd.concat(gdf_list, ignore_index=True)
+  clean_gdf = gpd.pd.concat(gdf_list, ignore_index=True)
+  return clean_gdf, (before_count, len(clean_gdf))
 
 
 # --- file writing ---
-clean_filename = '../files/POSTFIRE_CLEAN_DATA.geojson'
-clean_gdf = clean_by_time(gdf)
+def get_count():
+  gdf = gpd.read_file(filtered_filename)
+  clean_gdf, time_count = clean_by_time(gdf)
+  return {
+    'time': time_count
+  }
 
-clean_gdf.to_file(clean_filename, 'GEOJSON')
+
+def write_main():
+  count = get_count()
+  gdf = gpd.read_file(filtered_filename)
+  clean_gdf, _ = clean_by_time(gdf)
+  clean_gdf.to_file(clean_filename, 'GEOJSON')
+  return count
+
+
+if __name__ == '__main__':
+  write_main()
 
 
 # ----- ARCHIVE -----
