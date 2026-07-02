@@ -1,13 +1,6 @@
-# CAL FIRE DINS Wildfire Context Project
+# Characterizing California Wildfire Impacts Using CAL FIRE Data
 
-This project uses CAL FIRE Damage Inspection Program (DINS) structure data and National Interagency Fire Center (NIFC/WFIGS) fire perimeter data to add context to wildfire environmental sampling work. The goal is to connect sampling events at the wildfire front with information about the fire environment, including damaged structures, where those structures were located, and the fire perimeter around the sampled incident.
-
-The project instruction sheet describes a broader research effort focused on characterizing toxic emissions from Wildland-Urban Interface fires. Environmental samples were collected across several California wildfire events using silicone wristbands, skin wipes, sorbent tubes, and micro-preconcentrator chips. This repository supports that work by helping answer:
-
-- How many structures were damaged or destroyed during each fire?
-- Where were those structures located?
-- What fire perimeter information is available for the same incidents?
-- What structure materials and building features may help contextualize the sampled fire environment?
+This project uses CAL FIRE Damage Inspection Program (DINS) structure data and National Interagency Fire Center (NIFC/WFIGS) fire perimeter data to provide context for studies focusing on the carcinogenic effects of wildfires, such as CAFF-CRS (California Firefighter Cancer Research Study). This project's goal is to connect sampling events at the wildfire front with information about structures in the fire environment.
 
 ## Project Overview
 
@@ -80,7 +73,7 @@ The cleaning scripts remove records that appear inconsistent with the project sc
 - `data/clean_structure.py` keeps structure records whose `INCIDENTSTARTDATE` is within seven days of the expected incident start date.
 - `data/clean_perimeter.py` keeps perimeter records that are geographically close to the Los Angeles area and whose available perimeter date fields occur after the expected incident start date.
 
-### My Cleaning Logic Notes
+### Reasoning
 
 Use this space to explain why you chose the cleaning steps you did, what problems you noticed in the raw data, and what tradeoffs you made.
 
@@ -93,6 +86,17 @@ TODO:
 - Why I used the Los Angeles distance cutoff:
 - Why I handled missing/null perimeter dates this way:
 - Any limitations I noticed:
+
+Below are the counts printed by running ```data_main.py```
+
+--- perimeter ---
+original data: 38256
+filtered data: 42
+clean data: 6 (time), 12 (location)
+--- structure ---
+original data: 132522
+filtered data: 34473
+clean data: 34408 (time)
 
 ## How To Use
 
@@ -210,20 +214,8 @@ The CAL FIRE DINS dataset may include a small margin of error because severe fir
 The WFIGS perimeter dataset may not provide daily perimeter updates for every incident. Some fires may have only limited perimeter records or a final unified perimeter. The current plotting code uses the first cleaned perimeter record available for each fire.
 
 ## Author Notes
+Please email me if you have questions:
+Riley Jen
+rileykjen@gmail.com | 415-300-0824
 
-TODO:
-
-- Name:
-- Course/lab/project:
-- Date:
-- Research question:
-- What I learned:
-- What I would improve with more time:
-
-## Future Improvements
-
-- Add command-line arguments so users can choose the fire list, raw file paths, and output file paths without editing code.
-- Add automated checks for cleaned record counts and expected columns.
-- Save static figures or summary tables for reports.
-- Add clearer handling for fires with multiple perimeter updates.
-- Document data download links and retrieval dates.
+June 2026 - July 2026
