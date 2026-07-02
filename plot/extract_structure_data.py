@@ -18,8 +18,6 @@ gdf_base = gdf.to_crs(epsg=3857)
 
 # --- DAMAGE DATA ---
 damage_list = ['no damage', 'affected (>0-10%)', 'minor (10-25%)', 'major (25-50%)', 'destroyed (>50%)', 'inaccessible']
-damage_display_list = ['no damage', 'affected', 'minor', 'major', 'destroyed', 'inaccessible']
-damage_display_dict = dict(zip(damage_list, damage_display_list))
 color_code = ['green', 'gold', 'orange', 'red', 'black', 'gray']
 color_dict = dict(zip(damage_list, color_code))
 
@@ -215,7 +213,7 @@ structure_element_table_configs = [
     },
   },
   {
-    'key': 'patio_fence_table',
+    'key': 'combustibility_table',
     'columns': ['build', 'patio cover', 'fence'],
     'properties': ['PATIOCOVERCARPORT', 'FENCEATTACHEDTOSTRUCTURE'],
     'rows': ['combustible', 'non-combustible', 'n/a'],
@@ -313,7 +311,7 @@ def get_combustibility_table(fire_gdf):
 
   patio_fence_config = next(
     config for config in structure_element_table_configs
-    if config['key'] == 'patio_fence_table'
+    if config['key'] == 'combustibility_table'
   )
 
   # patio cover and fence already use combustibility-style labels
@@ -334,14 +332,13 @@ def get_combustibility_table(fire_gdf):
 
 
 '''
-returns all structure element tables for one set of structures
-the patio and fence table is replaced with the combustibility summary
+returns all structure element and combustibility tables for one set of structures
 '''
 def get_structure_element_tables(fire_gdf):
   tables = {}
 
   for config in structure_element_table_configs:
-    if config['key'] == 'patio_fence_table':
+    if config['key'] == 'combustibility_table':
       tables[config['key']] = get_combustibility_table(fire_gdf)
     else:
       tables[config['key']] = get_structure_element_table(fire_gdf, config)
@@ -366,8 +363,6 @@ def get_data(fire_name):
     'material_table': get_material_table(fire_gdf),
     'structure_element_tables': get_structure_element_tables(fire_gdf),
     'damage_list': damage_list,
-    'damage_display_list': damage_display_list,
-    'damage_display_dict': damage_display_dict,
     'color_code': color_code,
     'color_dict': color_dict,
   }

@@ -38,7 +38,9 @@ def get_displayed_damage_counts(structure_data, displayed_damages = None):
 def make_pie_legend(ax, wedges, percentages, damage_count, structure_data, legend_anchor):
   texts = []
   counts = list(damage_count.values())
-  total = sum(counts)
+  displayed_total = sum(counts)
+  fire_total = structure_data['total']
+  displayed_percent = get_displayed_percent(displayed_total, fire_total)
   
   for i in range(len(counts)):
     damage = structure_data['damage_list'][i]
@@ -52,5 +54,12 @@ def make_pie_legend(ax, wedges, percentages, damage_count, structure_data, legen
     ]
 
   ax.legend(wedges, texts, markerscale=3,
-    title='Total structures: ' + str(total), loc='lower right',
+    title='displayed: ' + str(displayed_total) + ' (' + displayed_percent + ')', loc='lower left',
     bbox_to_anchor=legend_anchor, bbox_transform=ax.figure.transFigure, frameon=True, facecolor='white')
+
+
+def get_displayed_percent(displayed_total, fire_total):
+  if fire_total == 0:
+    return '0%'
+
+  return str(round((displayed_total / fire_total) * 100)) + '%'
