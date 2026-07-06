@@ -4,7 +4,7 @@ This project uses CAL FIRE Damage Inspection Program (DINS) structure data and N
 
 ## Project Overview
 
-The program focuses on six California fire incidents:
+The program focuses on six California fire incidents, all centered around Los Angeles:
 
 - Palisades
 - Mountain
@@ -71,32 +71,23 @@ The filtering scripts select only records for the six fires used in this project
 The cleaning scripts remove records that appear inconsistent with the project scope.
 
 - `data/clean_structure.py` keeps structure records whose `INCIDENTSTARTDATE` is within seven days of the expected incident start date.
+  - Removes data points from different fires with the same name
+  - Further location filtering was considered but not necessary after reviewing the map plot
 - `data/clean_perimeter.py` keeps perimeter records that are geographically close to the Los Angeles area and whose available perimeter date fields occur after the expected incident start date.
+  - Combination removes rogue data with same name
+  - Perimeter data cannot be created or last editted before incident start date (time clean)
+  - Perimeter data must fall within a reasonable range of Los Angeles
 
-### Reasoning
+### Numbers
+perimeter
+- original data: 38256
+- filtered data: 42
+- clean data: 6 (time), 12 (location)
 
-Use this space to explain why you chose the cleaning steps you did, what problems you noticed in the raw data, and what tradeoffs you made.
-
-TODO:
-
-- Why I selected these six fires:
-- Why I used the incident-name filter:
-- Why I cleaned structure records by incident start date:
-- Why I cleaned perimeter records by location:
-- Why I used the Los Angeles distance cutoff:
-- Why I handled missing/null perimeter dates this way:
-- Any limitations I noticed:
-
-Below are the counts printed by running ```data_main.py```
-
---- perimeter ---
-original data: 38256
-filtered data: 42
-clean data: 6 (time), 12 (location)
---- structure ---
-original data: 132522
-filtered data: 34473
-clean data: 34408 (time)
+structure
+- original data: 132522
+- filtered data: 34473
+- clean data: 34408 (time)
 
 ## How To Use
 
