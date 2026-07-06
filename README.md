@@ -79,15 +79,15 @@ The cleaning scripts remove records that appear inconsistent with the project sc
   - Perimeter data must fall within a reasonable range of Los Angeles
 
 ### Numbers
-perimeter
-- original data: 38256
-- filtered data: 42
-- clean data: 6 (time), 12 (location)
+Perimeter:
+- Original data: 38256
+- Filtered data: 42
+- Clean data: 6 (time), 12 (location)
 
-structure
-- original data: 132522
-- filtered data: 34473
-- clean data: 34408 (time)
+Structure
+- Original data: 132522
+- Filtered data: 34473
+- Clean data: 34408 (time)
 
 ## How To Use
 
