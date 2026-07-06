@@ -55,6 +55,27 @@ const samplingData = {
   mountain: [['2024-11-07', ['Wipes']]],
   palisades: [['2025-01-11', ['Wristbands']]],
 };
+const samplingAxisLabelPlugin = {
+  id: 'samplingAxisLabelPlugin',
+  afterDraw(chart) {
+    if (chart.canvas.id !== 'sampling-chart') {
+      return;
+    }
+
+    const { ctx, chartArea, scales } = chart;
+    ctx.save();
+    ctx.fillStyle = '#151515';
+    ctx.font = '8px Arial, Helvetica, sans-serif';
+    ctx.textAlign = 'right';
+    ctx.textBaseline = 'middle';
+
+    for (const [index, label] of [...samplingTypes].reverse().entries()) {
+      ctx.fillText(label, chartArea.left - 7, scales.y.getPixelForValue(index));
+    }
+
+    ctx.restore();
+  },
+};
 const structureConfigs = [
   {
     key: 'eaves-table',
@@ -405,6 +426,7 @@ function initCharts() {
     },
     options: {
       animation: false,
+      aspectRatio: 1,
       plugins: {
         legend: { display: false },
         tooltip: { enabled: false },
@@ -418,18 +440,33 @@ function initCharts() {
     options: {
       animation: false,
       maintainAspectRatio: false,
+      layout: {
+        padding: {
+          left: 84,
+          right: 4,
+          top: 2,
+          bottom: 0,
+        },
+      },
       scales: {
         x: {
           min: -0.5,
           max: 0.5,
           grid: { color: '#d9d9d9' },
-          ticks: { callback: () => '' },
+          ticks: {
+            color: '#151515',
+            font: { size: 8 },
+            callback: () => '',
+          },
         },
         y: {
           min: -0.5,
           max: samplingTypes.length - 0.5,
           grid: { color: '#d9d9d9' },
           ticks: {
+            display: false,
+            color: '#151515',
+            font: { size: 8 },
             stepSize: 1,
             callback(value) {
               return [...samplingTypes].reverse()[value] || '';
@@ -441,6 +478,7 @@ function initCharts() {
         legend: { display: false },
       },
     },
+    plugins: [samplingAxisLabelPlugin],
   });
 
   materialChart = new Chart(document.getElementById('material-chart'), {
