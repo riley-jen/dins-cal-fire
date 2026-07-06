@@ -1,6 +1,7 @@
 '''
 this program is to clean the already filtered structure .geojson
 it writes a new .geojson that cleans the errors from the data by time
+and keeps only the columns used by the plotting program
 
 not to be confused with filter_structure.py
 '''
@@ -12,6 +13,20 @@ import geopandas as gpd
 # set up
 filtered_filename = Path(__file__).resolve().parent.parent / 'files' / 'POSTFIRE_FILTERED_DATA.geojson'
 clean_filename = Path(__file__).resolve().parent.parent / 'files' / 'POSTFIRE_CLEAN_DATA.geojson'
+plot_columns = [
+  'INCIDENTNAME',
+  'DAMAGE',
+  'ROOFCONSTRUCTION',
+  'EXTERIORSIDING',
+  'DECKPORCHONGRADE',
+  'DECKPORCHELEVATED',
+  'EAVES',
+  'VENTSCREEN',
+  'WINDOWPANE',
+  'PATIOCOVERCARPORT',
+  'FENCEATTACHEDTOSTRUCTURE',
+  'geometry',
+]
 
 incident_start_dates = [
   ('palisades', datetime(2025, 1, 7)),   # Palisades Fire (Ignited Jan 7, 2025)
@@ -66,6 +81,14 @@ def clean_by_time(gdf):
   return clean_gdf, (before_count, len(clean_gdf))
 
 
+'''
+keeps only the properties and geometry used by extract_structure_data.py
+so the clean GeoJSON is smaller but has the same record count
+'''
+def select_plot_columns(gdf):
+  return gdf[plot_columns].copy()
+
+
 # --- file writing ---
 def get_count():
   gdf = gpd.read_file(filtered_filename)
@@ -79,6 +102,11 @@ def write_main():
   count = get_count()
   gdf = gpd.read_file(filtered_filename)
   clean_gdf, _ = clean_by_time(gdf)
+  clean_gdf = select_plot_columns(clean_gdf)
+
+  if clean_filename.exists():
+    clean_filename.unlink()
+
   clean_gdf.to_file(clean_filename, 'GEOJSON')
   return count
 

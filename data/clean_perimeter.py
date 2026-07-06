@@ -1,6 +1,7 @@
 '''
 this program is to clean the already filtered perimeter .geojson
 it writes a new .geojson that cleans the errors from the data
+and keeps only the columns used by the plotting program
 
 not to be confused with filter_perimeter.py
 '''
@@ -14,6 +15,10 @@ import geopandas as gpd
 # set up
 filtered_filename = Path(__file__).resolve().parent.parent / 'files' / 'WFIGS_INTERAGENCY_PERIMETERS_FILTERED_DATA.geojson'
 clean_filename = Path(__file__).resolve().parent.parent / 'files' / 'WFIGS_INTERAGENCY_PERIMETERS_CLEAN_DATA.geojson'
+plot_columns = [
+  'poly_IncidentName',
+  'geometry',
+]
 
 incident_start_dates = [
   ('palisades', datetime(2025, 1, 7)),   # Palisades Fire (Ignited Jan 7, 2025)
@@ -139,6 +144,14 @@ def clean_by_distance(gdf):
   return clean_gdf, (before_count, len(clean_gdf))
 
 
+'''
+keeps only the incident name and geometry used by extract_perimeter_data.py
+so the clean GeoJSON is smaller but has the same record count
+'''
+def select_plot_columns(gdf):
+  return gdf[plot_columns].copy()
+
+
 # --- file writing ---
 def get_count():
   gdf = gpd.read_file(filtered_filename)
@@ -155,6 +168,7 @@ def write_main():
   gdf = gpd.read_file(filtered_filename)
   clean_gdf, _ = clean_by_distance(gdf)
   clean_gdf, _ = clean_by_time(clean_gdf)
+  clean_gdf = select_plot_columns(clean_gdf)
 
   if clean_filename.exists():
     clean_filename.unlink()
