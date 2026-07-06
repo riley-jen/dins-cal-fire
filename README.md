@@ -43,7 +43,7 @@ Damage categories currently shown are:
 
 Material values are grouped into categories such as asphalt, composite, masonry, metal, tile, vinyl, wood, and n/a.
 
-## Data Filtering And Cleaning Process
+## Data Filtering And Cleaning Methodology
 
 The repository keeps the raw source data separate from filtered and cleaned files.
 
@@ -59,6 +59,8 @@ Generated working files:
 - `files/WFIGS_INTERAGENCY_PERIMETERS_FILTERED_DATA.geojson`
 - `files/WFIGS_INTERAGENCY_PERIMETERS_CLEAN_DATA.geojson`
 
+The filtered files preserve the source fields needed for review and cleaning. The cleaned files are slimmer plotting files: they keep the same cleaned records, but only the properties used by the visualization plus each feature's geometry.
+
 ### Filtering
 
 The filtering scripts select only records for the six fires used in this project.
@@ -73,21 +75,35 @@ The cleaning scripts remove records that appear inconsistent with the project sc
 - `data/clean_structure.py` keeps structure records whose `INCIDENTSTARTDATE` is within seven days of the expected incident start date.
   - Removes data points from different fires with the same name
   - Further location filtering was considered but not necessary after reviewing the map plot
+  - Writes only the incident, damage, material, building feature, and geometry fields used by `plot/extract_structure_data.py`
 - `data/clean_perimeter.py` keeps perimeter records that are geographically close to the Los Angeles area and whose available perimeter date fields occur after the expected incident start date.
   - Combination removes rogue data with same name
   - Perimeter data cannot be created or last editted before incident start date (time clean)
   - Perimeter data must fall within a reasonable range of Los Angeles
+  - Writes only the incident name and geometry fields used by `plot/extract_perimeter_data.py`
 
-### Numbers
+### Data Caveats
+Structure:
+  - Not all damaged structures may be included in the dataset, and some records may be incomplete, resulting in a small error between the reported and actual number of damaged structures.
+  - A structure included in the dataset is defined according to National Flood Insurance Program (NFIP) standards:
+    - Standard buildings 120 square feet or greater with two or more rigid exterior walls, a fully secured roof, and affixed to a permanent site.
+    - Habitable structures under 120 square feet actively used for human habitation.
+    - Manufactured/Mobile homes and travel trailers (without wheels) permanently affixed to a foundation.
+    - Exclusions: Gas/liquid storage tanks, RVs, and park trailers are not classified as buildings unless they meet the permanent foundation criteria.
+
+Perimeter:
+  - The final 6 fires left after filtering and cleaning were the final perimeters for the fire, which is not an accurate representation of the fire at the time of sampling
+
+### Counts
+Structure:
+- Original data: 132522
+- Filtered data: 34473
+- Clean data: 34408 (time)
+
 Perimeter:
 - Original data: 38256
 - Filtered data: 42
 - Clean data: 6 (time), 12 (location)
-
-Structure
-- Original data: 132522
-- Filtered data: 34473
-- Clean data: 34408 (time)
 
 ## How To Use
 
@@ -112,7 +128,7 @@ python3 data/clean_structure.py
 python3 data/clean_perimeter.py
 ```
 
-These commands read the raw GeoJSON files from the parent project directory and write updated GeoJSON files into `files/`.
+These commands read the raw GeoJSON files from the parent project directory and write updated GeoJSON files into `files/`. The clean files are reduced to the fields used by the plotting code so the visualization loads less unused data.
 
 ### 3. Check data counts with `data_main.py`
 
