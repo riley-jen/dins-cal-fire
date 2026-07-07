@@ -180,30 +180,6 @@ body {
   margin-left: 6px;
 }
 
-.scale-bar {
-  position: absolute;
-  left: 8%;
-  bottom: 8%;
-  z-index: 500;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  min-width: 70px;
-  pointer-events: none;
-}
-
-.scale-bar span {
-  width: 64px;
-  border-top: 3px solid #000000;
-}
-
-.scale-bar strong {
-  padding: 2px 5px;
-  background: rgba(255, 255, 255, 0.85);
-  font-size: 9px;
-  font-weight: 700;
-}
-
 .damage-controls {
   left: 37%;
   top: 11.1%;
