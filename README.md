@@ -204,36 +204,17 @@ The project uses Python geospatial, data analysis, and plotting libraries. Impor
 
 The full pinned dependency list is in `requirements.txt`.
 
-## Use Of AI
+## AI Usage
+AI assistance was utilized during the development of this project to accelerate implementation and support specific workflows:
+- **Gemini** was used lightly in the early stages to assist with implementation of matplotlib and geopandas. Gemini does not have access to the codebase or repository.
+- **Codex** was used from the mid-stages onward to accelerate feature development, fix bugs, and perform refactors. It also heavily assisted in adapting the Python architecture into the web version and streamlining PR reviews. 
 
-### Codex
-
-Codex was used as a coding and documentation assistant for this project. In this README, Codex helped inspect the repository structure, summarize the purpose of the scripts, turn the project instruction PDF into background language, and draft documentation that matches the current code. Codex also identified places where the README should leave space for the project author's own cleaning logic, decision-making process, and reflection.
-
-TODO:
-
-- How I used Codex during coding:
-- What Codex helped me debug or improve:
-- How I checked Codex's suggestions:
-- What parts I wrote or changed myself:
-
-### Gemini
-
-TODO:
-
-- How I used Gemini:
-- What Gemini helped with:
-- How I checked Gemini's suggestions:
-
-## Data Notes And Limitations
-
-The CAL FIRE DINS dataset may include a small margin of error because severe fire damage and poor geographic access can make inspections difficult. Null values indicate information that could not be determined in the field. DINS records also include both field-determined address fields and address/APN fields added later through spatial joins.
-
-The WFIGS perimeter dataset may not provide daily perimeter updates for every incident. Some fires may have only limited perimeter records or a final unified perimeter. The current plotting code uses the first cleaned perimeter record available for each fire.
+*Note: While AI-generated code was thoroughly reviewed, tested, and revised before integration, mistakes may still exist.*
 
 ## Author Notes
 Please email me if you have questions:
-Riley Jen
+
+Riley Jen: 
 rileykjen@gmail.com | 415-300-0824
 
-June 2026 - July 2026
+Project timeframe: June 2026 - July 2026
