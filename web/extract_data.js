@@ -14,7 +14,7 @@ function cleanValue(value) {
 }
 
 function getMaterial(value) {
-  const clean = cleanValue(value).replace('/', ' ');
+  const clean = cleanValue(value).replaceAll('/', ' ');
 
   if (materials.includes(clean)) {
     return clean;
@@ -118,7 +118,7 @@ function getStructureRow(value, config) {
     return config.rowMap[clean];
   }
 
-  const withoutSlash = clean.replace('/', ' ');
+  const withoutSlash = clean.replaceAll('/', ' ');
   if (withoutSlash in config.rowMap) {
     return config.rowMap[withoutSlash];
   }
