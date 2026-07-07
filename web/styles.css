@@ -65,7 +65,7 @@ body {
 
 .map-panel {
   left: 3%;
-  top: 6%;
+  top: 8%;
   width: 33%;
   height: 44%;
 }
@@ -206,7 +206,7 @@ body {
 
 .damage-controls {
   left: 37%;
-  top: 5.5%;
+  top: 11.1%;
   width: 11%;
   height: 28.1%;
 }
@@ -230,20 +230,22 @@ body {
 
 .pie-panel {
   left: 35%;
-  top: 52%;
+  top: 58.5%;
   width: 12%;
   height: 38%;
 }
 
 .pie-panel h2 {
-  height: 15%;
+  height: 10%;
+  transform: translate(15%, -35px);
 }
 
 .pie-panel canvas {
   display: block;
   width: 90% !important;
   height: auto !important;
-  margin: 0 auto;
+  margin-left: 20%;
+  transform: translateY(-5px);
   aspect-ratio: 1 / 1;
 }
 
@@ -252,7 +254,7 @@ body {
   left: 12%;
   top: -48%;
   z-index: 450;
-  width: 145%;
+  width: 118%;
   padding: 5px 7px;
   border: 1px solid var(--border);
   background: #ffffff;
@@ -278,7 +280,7 @@ body {
 }
 
 .sampling-panel {
-  left: 6%;
+  left: 3%;
   top: 57%;
   width: 27%;
   height: 28%;
@@ -295,7 +297,7 @@ body {
 
 .combustibility-panel {
   left: 55%;
-  top: 9%;
+  top: 15%;
   width: 40%;
   height: 8%;
 }
@@ -309,7 +311,7 @@ body {
 
 .material-table-panel {
   left: 55%;
-  top: 19.5%;
+  top: 25.5%;
   width: 40%;
   height: 34%;
 }
