@@ -16,7 +16,7 @@ import geopandas as gpd
 # set up
 filtered_filename = Path(__file__).resolve().parent.parent / 'files' / 'WFIGS_INTERAGENCY_PERIMETERS_FILTERED_DATA.geojson'
 clean_filename = Path(__file__).resolve().parent.parent / 'files' / 'WFIGS_INTERAGENCY_PERIMETERS_CLEAN_DATA.geojson'
-web_clean_filename = Path(__file__).resolve().parent.parent / 'web' / 'data' / 'WFIGS_INTERAGENCY_PERIMETERS_CLEAN_DATA.geojson'
+web_clean_filename = Path(__file__).resolve().parent.parent / 'docs' / 'data' / 'WFIGS_INTERAGENCY_PERIMETERS_CLEAN_DATA.geojson'
 plot_columns = [
   'poly_IncidentName',
   'geometry',

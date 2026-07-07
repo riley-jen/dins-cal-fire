@@ -14,7 +14,7 @@ import geopandas as gpd
 # set up
 filtered_filename = Path(__file__).resolve().parent.parent / 'files' / 'POSTFIRE_FILTERED_DATA.geojson'
 clean_filename = Path(__file__).resolve().parent.parent / 'files' / 'POSTFIRE_CLEAN_DATA.geojson'
-web_clean_filename = Path(__file__).resolve().parent.parent / 'web' / 'data' / 'POSTFIRE_CLEAN_DATA.geojson'
+web_clean_filename = Path(__file__).resolve().parent.parent / 'docs' / 'data' / 'POSTFIRE_CLEAN_DATA.geojson'
 plot_columns = [
   'INCIDENTNAME',
   'DAMAGE',
