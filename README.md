@@ -27,10 +27,10 @@ The plotting program displays one fire at a time. For each selected fire, it sho
 - A map of inspected structures, colored by damage level.
 - A fire perimeter layer over the structure map.
 - A damage distribution summary.
-- Sampling dates and sampling methods for that fire.
-- Material composition tables for roof, siding, ground deck, and elevated deck fields.
-- A stacked material bar chart.
-- Building feature summaries for eaves, vent screens, window panes, patio cover/carport, fence, and combustibility.
+- Sampling dates and methods for that fire.
+- Material composition and combustibility tables for roof, siding, ground deck, and elevated deck fields (and patio cover/carport and fence for combustibility)
+- A stacked material bar chart for visualization
+- Building feature summaries for eaves, vent screens, and window panes.
 
 Damage categories currently shown are:
 
@@ -78,13 +78,14 @@ The cleaning scripts remove records that appear inconsistent with the project sc
   - Writes only the incident, damage, material, building feature, and geometry fields used by `plot/extract_structure_data.py`
 - `data/clean_perimeter.py` keeps perimeter records that are geographically close to the Los Angeles area and whose available perimeter date fields occur after the expected incident start date.
   - Combination removes rogue data with same name
-  - Perimeter data cannot be created or last editted before incident start date (time clean)
+  - Perimeter data cannot be created or last editted before incident start date (time clean). All available date entries are considered for this step
   - Perimeter data must fall within a reasonable range of Los Angeles
   - Writes only the incident name and geometry fields used by `plot/extract_perimeter_data.py`
 
 ### Data Caveats
 Structure:
   - Not all damaged structures may be included in the dataset, and some records may be incomplete, resulting in a small error between the reported and actual number of damaged structures.
+  - The dataset does not include where the buildings were damaged, limiting the ability to determine which building materials or structural components were burned.
   - A structure included in the dataset is defined according to National Flood Insurance Program (NFIP) standards:
     - Standard buildings 120 square feet or greater with two or more rigid exterior walls, a fully secured roof, and affixed to a permanent site.
     - Habitable structures under 120 square feet actively used for human habitation.
@@ -92,7 +93,11 @@ Structure:
     - Exclusions: Gas/liquid storage tanks, RVs, and park trailers are not classified as buildings unless they meet the permanent foundation criteria.
 
 Perimeter:
+  - Due to damage and hard to access areas, there is likely a small error between the reported and actual fire perimeters
+  - Some records contained incomplete timestamp information (i.e., only one or two of CreateDate, DateCurrent, and PolygonDateTime were present). In these cases, only the available timestamp fields were used
   - The final 6 fires left after filtering and cleaning were the final perimeters for the fire, which is not an accurate representation of the fire at the time of sampling
+  - No additional filtering or validation was performed after reducing the dataset to the final six perimeter records. As a result, the current implementation does not support fires or datasets with multiple valid perimeter candidates.
+
 
 ### Counts
 Structure:
@@ -103,7 +108,7 @@ Structure:
 Perimeter:
 - Original data: 38256
 - Filtered data: 42
-- Clean data: 6 (time), 12 (location)
+- Clean data: 12 (location), 6 (location + time)
 
 ## How To Use
 
