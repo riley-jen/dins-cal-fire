@@ -1,0 +1,78 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>CAL FIRE Structure Data</title>
+    <link
+      rel="stylesheet"
+      href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+      integrity="sha256-p4NxAoJBhIINfQjEYl8Pbb9GgbLj8C3hH6pZm5x9i/E="
+      crossorigin=""
+    >
+    <link rel="stylesheet" href="styles.css?v=dev">
+  </head>
+  <body>
+    <main class="figure" aria-label="CAL FIRE structure data dashboard">
+      <section class="panel map-panel">
+        <h1 id="map-title">california fire</h1>
+        <div id="map"></div>
+      </section>
+
+      <section class="panel damage-controls" aria-label="damage filters">
+        <div id="damage-filters"></div>
+      </section>
+
+      <section class="panel pie-panel">
+        <h2>damaged structures<br>distribution</h2>
+        <canvas id="damage-chart"></canvas>
+        <div id="damage-legend" class="chart-legend"></div>
+      </section>
+
+      <section class="panel sampling-panel">
+        <h2>sampling dates</h2>
+        <canvas id="sampling-chart"></canvas>
+      </section>
+
+      <section class="panel combustibility-panel">
+        <h2>combustibility</h2>
+        <div id="combustibility-table" class="table-host compact-table"></div>
+      </section>
+
+      <section class="panel material-table-panel">
+        <h2>structural composition and material</h2>
+        <div id="material-table" class="table-host"></div>
+      </section>
+
+      <section class="panel material-bar-panel">
+        <canvas id="material-chart"></canvas>
+      </section>
+
+      <section class="panel feature-panel eaves-panel">
+        <h2>building properties</h2>
+        <div id="eaves-table" class="table-host mini-table"></div>
+      </section>
+
+      <section class="panel feature-panel ventscreen-panel">
+        <div id="ventscreen-table" class="table-host mini-table"></div>
+      </section>
+
+      <section class="panel feature-panel windowpane-panel">
+        <div id="windowpane-table" class="table-host mini-table"></div>
+      </section>
+
+      <nav id="fire-buttons" class="fire-buttons" aria-label="fire selection"></nav>
+    </main>
+
+    <script
+      src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+      integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
+      crossorigin=""
+    ></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.8/dist/chart.umd.min.js"></script>
+    <script src="config.js"></script>
+    <script src="extract_data.js"></script>
+    <script src="plot.js"></script>
+    <script src="app.js"></script>
+  </body>
+</html>

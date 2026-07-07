@@ -1,6 +1,8 @@
 '''
 this program is to clean the already filtered structure .geojson
 it writes a new .geojson that cleans the errors from the data by time
+and keeps only the columns used by the plotting programs
+it also writes a web copy reprojected to longitude/latitude for Leaflet
 
 not to be confused with filter_structure.py
 '''
@@ -12,6 +14,21 @@ import geopandas as gpd
 # set up
 filtered_filename = Path(__file__).resolve().parent.parent / 'files' / 'POSTFIRE_FILTERED_DATA.geojson'
 clean_filename = Path(__file__).resolve().parent.parent / 'files' / 'POSTFIRE_CLEAN_DATA.geojson'
+web_clean_filename = Path(__file__).resolve().parent.parent / 'web' / 'data' / 'POSTFIRE_CLEAN_DATA.geojson'
+plot_columns = [
+  'INCIDENTNAME',
+  'DAMAGE',
+  'ROOFCONSTRUCTION',
+  'EXTERIORSIDING',
+  'DECKPORCHONGRADE',
+  'DECKPORCHELEVATED',
+  'EAVES',
+  'VENTSCREEN',
+  'WINDOWPANE',
+  'PATIOCOVERCARPORT',
+  'FENCEATTACHEDTOSTRUCTURE',
+  'geometry',
+]
 
 incident_start_dates = [
   ('palisades', datetime(2025, 1, 7)),   # Palisades Fire (Ignited Jan 7, 2025)
@@ -66,6 +83,35 @@ def clean_by_time(gdf):
   return clean_gdf, (before_count, len(clean_gdf))
 
 
+'''
+keeps only the properties and geometry used by extract_structure_data.py
+so the clean GeoJSON is smaller but has the same record count
+'''
+def select_plot_columns(gdf):
+  return gdf[plot_columns].copy()
+
+
+'''
+writes a GeoJSON file, replacing the old copy if it exists
+'''
+def write_geojson(gdf, filename):
+  filename.parent.mkdir(parents=True, exist_ok=True)
+
+  if filename.exists():
+    filename.unlink()
+
+  gdf.to_file(filename, 'GEOJSON')
+
+
+'''
+writes the web dashboard structure file in EPSG:4326
+Leaflet expects longitude/latitude coordinates, while the Python plots use EPSG:3310
+'''
+def write_web_geojson(clean_gdf):
+  web_gdf = clean_gdf.set_crs('EPSG:3310', allow_override=True).to_crs('EPSG:4326')
+  write_geojson(web_gdf, web_clean_filename)
+
+
 # --- file writing ---
 def get_count():
   gdf = gpd.read_file(filtered_filename)
@@ -79,7 +125,10 @@ def write_main():
   count = get_count()
   gdf = gpd.read_file(filtered_filename)
   clean_gdf, _ = clean_by_time(gdf)
-  clean_gdf.to_file(clean_filename, 'GEOJSON')
+  clean_gdf = select_plot_columns(clean_gdf)
+
+  write_geojson(clean_gdf, clean_filename)
+  write_web_geojson(clean_gdf)
   return count
 
 
