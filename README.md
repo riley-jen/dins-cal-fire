@@ -16,7 +16,9 @@ The program focuses on six California fire incidents, all centered around Los An
 It combines two primary datasets:
 
 - **CAL FIRE DINS structure data**: post-fire inspection records for structures impacted by wildland fires in the Statewide Responsibility Area. The data includes inspection locations, damage categories, structural materials, and building feature fields.
+  - Database information: https://www.lab.data.ca.gov/dataset/cal-fire-damage-inspection-dins-data 
 - **NIFC/WFIGS fire perimeter data**: geospatial fire perimeter records used to understand the footprint and boundary context of each incident.
+  - Database information: https://data-nifc.opendata.arcgis.com/datasets/nifc::wfigs-interagency-fire-perimeters/about
 
 The cleaned data is visualized in an interactive Matplotlib window that lets the user switch between fires and damage categories.
 
