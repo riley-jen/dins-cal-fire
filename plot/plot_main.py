@@ -13,12 +13,14 @@ from subplot.plot_table import show_combustibility_table, show_table, show_struc
 # --- VARIABLES ---
 fig = None
 buttons = []
+display_buttons = []
 damage_boxes = []
 fires_list = ['palisades', 'mountain', 'eaton', 'franklin', 'line', 'bridge']
 structure_data_by_fire = {}
 perimeter_data_by_fire = {}
 displayed_damages = extract_structure_data.damage_list.copy()
 current_fire_name = None
+current_display = 'table'
 
 map_ax = None
 pie_ax = None
@@ -41,6 +43,7 @@ material_structure_element_table_positions = {
   'ventscreen_table': [0.82, 0.240, 0.15, 0.095],
   'windowpane_table': [0.82, 0.140, 0.15, 0.080],
 }
+display_button_names = ['table', 'bar chart']
 
 
 # --- MAIN FUNCTIONS ---
@@ -103,6 +106,24 @@ def make_fire_buttons(buttons, fires_list):
   return buttons
 
 
+def make_display_buttons(buttons):
+  nf = len(fires_list)
+  space = 0.025
+  width = (1-(0.5+space*(nf-1)))/nf
+
+  for i in range(len(display_button_names)):
+    display_name = display_button_names[i]
+    button_space = fig.add_axes([0.825+(width+space)*i, 0.93, width, 0.05])
+
+    display_btn = Button(button_space, display_name)
+    display_btn.label.set_fontsize(9)
+    display_btn.on_clicked(lambda event, name=display_name: set_display_mode(name))
+
+    buttons.append(display_btn)
+
+  return buttons
+
+
 def make_damage_boxes(boxes, damage_list):
   for i in range(len(damage_list)):
     damage = damage_list[i]
@@ -157,6 +178,16 @@ def apply_material_features(fire_name = ''):
   for structure_element_ax in structure_element_axes.values():
     structure_element_ax.axis('off')
 
+  update_display_button_features()
+
+
+def update_display_button_features():
+  for display_btn in display_buttons:
+    if display_btn.label.get_text() == current_display:
+      display_btn.ax.set_facecolor('0.85')
+    else:
+      display_btn.ax.set_facecolor('0.95')
+
 
 def clear_structure_element_axes():
   for structure_element_ax in structure_element_axes.values():
@@ -176,8 +207,8 @@ def show_structure_element_tables(structure_data):
 
 # --- SET UP ---
 def make_main_window(input_figure):
-  global fig, map_ax, pie_ax, sampling_ax, table_ax, bar_ax, combustibility_ax, structure_element_axes
-  global buttons, damage_boxes
+  global fig, map_ax, pie_ax, sampling_ax, table_ax, combustibility_ax, structure_element_axes
+  global buttons, display_buttons, damage_boxes
 
   preload_data()
 
@@ -197,9 +228,11 @@ def make_main_window(input_figure):
   }
 
   buttons = []
+  display_buttons = []
   damage_boxes = []
   make_damage_boxes(damage_boxes, extract_structure_data.damage_list)
   make_fire_buttons(buttons, fires_list)
+  make_display_buttons(display_buttons)
 
   apply_damage_features()
   apply_material_features()
