@@ -56,11 +56,11 @@ body {
 
 .panel h1 {
   height: 7%;
-  font-size: 16px;
+  font-size: 18px;
 }
 
 .panel h2 {
-  font-size: 13px;
+  font-size: 15px;
 }
 
 .map-panel {
@@ -194,7 +194,7 @@ body {
   height: 12.5%;
   min-height: 22px;
   gap: 5px;
-  font-size: 11px;
+  font-size: 13px;
   line-height: 1.05;
 }
 
@@ -234,7 +234,7 @@ body {
   padding: 5px 7px;
   border: 1px solid var(--border);
   background: #ffffff;
-  font-size: 10px;
+  font-size: 12px;
 }
 
 .legend-title {
@@ -288,7 +288,7 @@ body {
   background: #f7f7f7;
   color: #202020;
   font: inherit;
-  font-size: 12px;
+  font-size: 14px;
   cursor: pointer;
 }
 
@@ -402,12 +402,12 @@ body {
 
 .feature-chart-panel h2 {
   top: -42%;
-  font-size: 13px;
+  font-size: 15px;
 }
 
 .feature-chart-panel h3 {
   top: -19%;
-  font-size: 12px;
+  font-size: 14px;
 }
 
 .feature-chart-panel canvas {
@@ -436,7 +436,7 @@ table {
   width: 100%;
   border-collapse: collapse;
   table-layout: fixed;
-  font-size: 10px;
+  font-size: 12px;
   text-align: center;
 }
 
@@ -455,11 +455,11 @@ th {
 }
 
 .compact-table table {
-  font-size: 9px;
+  font-size: 11px;
 }
 
 .mini-table table {
-  font-size: 8px;
+  font-size: 10px;
 }
 
 .fire-buttons {
@@ -479,7 +479,7 @@ th {
   background: #f7f7f7;
   color: #202020;
   font: inherit;
-  font-size: 12px;
+  font-size: 14px;
   cursor: pointer;
 }
 

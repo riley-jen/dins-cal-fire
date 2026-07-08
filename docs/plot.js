@@ -59,7 +59,7 @@ const samplingAxisLabelPlugin = {
     const { ctx, chartArea, scales } = chart;
     ctx.save();
     ctx.fillStyle = '#151515';
-    ctx.font = '8px Arial, Helvetica, sans-serif';
+    ctx.font = '10px Arial, Helvetica, sans-serif';
     ctx.textAlign = 'right';
     ctx.textBaseline = 'middle';
 
@@ -102,7 +102,7 @@ function makeStackedBarChart(canvasId, labels, compact = false) {
           ticks: {
             autoSkip: false,
             color: '#151515',
-            font: { size: compact ? 8 : 10 },
+            font: { size: compact ? 10 : 12 },
           },
         },
       },
@@ -112,7 +112,7 @@ function makeStackedBarChart(canvasId, labels, compact = false) {
           labels: {
             boxWidth: compact ? 9 : 12,
             padding: compact ? 12 : 10,
-            font: { size: compact ? 8 : 9 },
+            font: { size: compact ? 10 : 11 },
           },
         },
         tooltip: { enabled: false },
@@ -220,7 +220,7 @@ function initCharts() {
           grid: { color: '#d9d9d9' },
           ticks: {
             color: '#151515',
-            font: { size: 8 },
+            font: { size: 10 },
             callback: () => '',
           },
         },
@@ -231,7 +231,7 @@ function initCharts() {
           ticks: {
             display: false,
             color: '#151515',
-            font: { size: 8 },
+            font: { size: 10 },
             stepSize: 1,
             callback(value) {
               return [...plotSamplingTypes].reverse()[value] || '';
