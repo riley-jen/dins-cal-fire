@@ -3,7 +3,7 @@ from matplotlib.widgets import Button, CheckButtons
 
 import extract_structure_data
 import extract_perimeter_data
-from subplot.plot_bar import show_material_bar_chart
+from subplot.plot_bar import show_combustibility_bar_chart, show_material_bar_chart, show_structure_element_bar_chart
 from subplot.plot_map import show_fire_map
 from subplot.plot_pie import show_damage_pie
 from subplot.plot_sampling import show_sampling_scatter
@@ -26,7 +26,6 @@ map_ax = None
 pie_ax = None
 sampling_ax = None
 table_ax = None
-bar_ax = None
 combustibility_ax = None
 structure_element_axes = {}
 
@@ -36,12 +35,18 @@ damage_sampling_position = [0.075, 0.15, 0.27, 0.28]
 pie_legend_anchor = [0.37, 0.5]
 
 table_position = [0.55, 0.465, 0.4, 0.34]
-material_bar_position = [0.525, 0.2, 0.275, 0.28]
 combustibility_table_position = [0.55, 0.83, 0.4, 0.080]
 material_structure_element_table_positions = {
   'eaves_table': [0.82, 0.355, 0.15, 0.080],
   'ventscreen_table': [0.82, 0.240, 0.15, 0.095],
   'windowpane_table': [0.82, 0.140, 0.15, 0.080],
+}
+material_chart_position = [0.55, 0.50, 0.4, 0.25]
+combustibility_chart_position = [0.55, 0.76, 0.4, 0.14]
+material_structure_element_chart_positions = {
+  'eaves_table': [0.83, 0.2, 0.12, 0.15],
+  'ventscreen_table': [0.55, 0.2, 0.12, 0.15],
+  'windowpane_table': [0.69, 0.2, 0.12, 0.15],
 }
 display_button_names = ['table', 'bar chart']
 
@@ -61,7 +66,6 @@ def plot_fire(fire_name):
   pie_ax.clear()
   sampling_ax.clear()
   table_ax.clear()
-  bar_ax.clear()
   combustibility_ax.clear()
   clear_structure_element_axes()
 
@@ -80,10 +84,7 @@ def plot_fire(fire_name):
   filtered_structure_data['material_table'] = extract_structure_data.get_material_table(displayed_gdf)
   filtered_structure_data['structure_element_tables'] = extract_structure_data.get_structure_element_tables(displayed_gdf)
 
-  show_table(table_ax, filtered_structure_data)
-  show_material_bar_chart(bar_ax, filtered_structure_data)
-  show_combustibility_table(combustibility_ax, filtered_structure_data)
-  show_structure_element_tables(filtered_structure_data)
+  show_material_display(filtered_structure_data)
 
   apply_material_features(fire_name)
   plt.draw()
@@ -151,6 +152,17 @@ def toggle_damage(damage):
     plot_fire(current_fire_name)
 
 
+def set_display_mode(display_mode):
+  global current_display
+  current_display = display_mode
+
+  if current_fire_name is not None:
+    plot_fire(current_fire_name)
+  else:
+    update_display_button_features()
+    plt.draw()
+
+
 def apply_damage_features(fire_name = ''):
   if fire_name != '':
     map_ax.set_title(fire_name + ' fire structures map')
@@ -169,8 +181,10 @@ def apply_damage_features(fire_name = ''):
 
 def apply_material_features(fire_name = ''):
   if fire_name != '':
-    table_ax.set_title('structural composition and material', y=0.85)
-    pass
+    if current_display == 'table':
+      table_ax.set_title('structural composition and material', y=0.85)
+    else:
+      table_ax.set_title('structural composition and material', y=1.02)
 
   table_ax.axis('off')
   combustibility_ax.axis('off')
@@ -194,10 +208,48 @@ def clear_structure_element_axes():
     structure_element_ax.clear()
 
 
+def show_material_display(structure_data):
+  apply_material_layout()
+
+  if current_display == 'table':
+    show_table(table_ax, structure_data)
+    show_combustibility_table(combustibility_ax, structure_data)
+    show_structure_element_tables(structure_data)
+  else:
+    show_material_bar_chart(table_ax, structure_data)
+    show_combustibility_bar_chart(combustibility_ax, structure_data)
+    show_structure_element_bar_charts(structure_data)
+
+
+def apply_material_layout():
+  if current_display == 'table':
+    table_ax.set_position(table_position)
+    combustibility_ax.set_position(combustibility_table_position)
+    structure_element_positions = material_structure_element_table_positions
+  else:
+    table_ax.set_position(material_chart_position)
+    combustibility_ax.set_position(combustibility_chart_position)
+    structure_element_positions = material_structure_element_chart_positions
+
+  for table_key, position in structure_element_positions.items():
+    structure_element_axes[table_key].set_position(position)
+
+
 def show_structure_element_tables(structure_data):
   for table_key in material_structure_element_table_positions:
     df_clean = structure_data['structure_element_tables'][table_key]
     show_structure_element_table(
+      structure_element_axes[table_key],
+      df_clean
+    )
+    if table_key == 'eaves_table':
+      structure_element_axes[table_key].set_title('building properties')
+
+
+def show_structure_element_bar_charts(structure_data):
+  for table_key in material_structure_element_table_positions:
+    df_clean = structure_data['structure_element_tables'][table_key]
+    show_structure_element_bar_chart(
       structure_element_axes[table_key],
       df_clean
     )
@@ -220,7 +272,6 @@ def make_main_window(input_figure):
   pie_ax = fig.add_axes(damage_pie_position)
   sampling_ax = fig.add_axes(damage_sampling_position)
   table_ax = fig.add_axes(table_position)
-  bar_ax = fig.add_axes(material_bar_position)
   combustibility_ax = fig.add_axes(combustibility_table_position)
   structure_element_axes = {
     table_key: fig.add_axes(position)
@@ -236,7 +287,6 @@ def make_main_window(input_figure):
 
   apply_damage_features()
   apply_material_features()
-  bar_ax.axis('off')
 
 
 main_fig = plt.figure(figsize=(16, 8))
