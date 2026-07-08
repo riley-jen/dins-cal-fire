@@ -34,12 +34,12 @@ damage_pie_position = [0.35, 0.1, 0.12, 0.38]
 damage_sampling_position = [0.075, 0.15, 0.27, 0.28]
 pie_legend_anchor = [0.37, 0.5]
 
-table_position = [0.55, 0.465, 0.4, 0.34]
-combustibility_table_position = [0.55, 0.83, 0.4, 0.080]
+table_position = [0.55, 0.365, 0.4, 0.34]
+combustibility_table_position = [0.55, 0.73, 0.4, 0.080]
 material_structure_element_table_positions = {
-  'eaves_table': [0.82, 0.355, 0.15, 0.080],
-  'ventscreen_table': [0.82, 0.240, 0.15, 0.095],
-  'windowpane_table': [0.82, 0.140, 0.15, 0.080],
+  'eaves_table': [0.844, 0.2, 0.12, 0.15],
+  'windowpane_table': [0.692, 0.2, 0.12, 0.15],
+  'ventscreen_table': [0.540, 0.2, 0.12, 0.15]
 }
 material_chart_position = [0.55, 0.50, 0.4, 0.25]
 combustibility_chart_position = [0.55, 0.76, 0.4, 0.14]
@@ -108,20 +108,19 @@ def make_fire_buttons(buttons, fires_list):
 
 
 def make_display_buttons(buttons):
-  nf = len(fires_list)
-  space = 0.025
-  width = (1-(0.5+space*(nf-1)))/nf
+  offset = 0.01
+  width = 0.075
 
-  for i in range(len(display_button_names)):
-    display_name = display_button_names[i]
-    button_space = fig.add_axes([0.825+(width+space)*i, 0.93, width, 0.05])
+  display_btn1 = Button(fig.add_axes([0.75-offset-width, 0.9, width, 0.05]), 'table')
+  display_btn1.label.set_fontsize(9)
+  display_btn1.on_clicked(lambda event, name='table': set_display_mode('table'))
 
-    display_btn = Button(button_space, display_name)
-    display_btn.label.set_fontsize(9)
-    display_btn.on_clicked(lambda event, name=display_name: set_display_mode(name))
+  display_btn2 = Button(fig.add_axes([0.75+offset, 0.9, width, 0.05]), 'bar chart')
+  display_btn2.label.set_fontsize(9)
+  display_btn2.on_clicked(lambda event, name='bar chart': set_display_mode('bar chart'))
 
-    buttons.append(display_btn)
-
+  buttons.append(display_btn1)
+  buttons.append(display_btn2)
   return buttons
 
 
@@ -242,7 +241,7 @@ def show_structure_element_tables(structure_data):
       structure_element_axes[table_key],
       df_clean
     )
-    if table_key == 'eaves_table':
+    if table_key == 'windowpane_table':
       structure_element_axes[table_key].set_title('building properties')
 
 
