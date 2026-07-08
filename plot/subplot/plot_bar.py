@@ -20,7 +20,7 @@ material_colors = {
 }
 
 combustibility_colors = {
-  'combustible': '#8B4513',
+  'combustible': '#B22222',
   'non-combustible': '#4682B4',
   'n/a': '#D3D3D3',
 }
@@ -60,6 +60,8 @@ def show_material_bar_chart(bar_ax, structure_data):
     row_column=df_clean.columns[0],
     colors=material_colors,
     legend_columns=4,
+    title='structural composition and material',
+    title_y=1.08,
   )
 
 
@@ -74,6 +76,8 @@ def show_combustibility_bar_chart(bar_ax, structure_data):
     row_column=df_clean.columns[0],
     colors=combustibility_colors,
     legend_columns=3,
+    title='combustibility',
+    title_y=1.10,
   )
 
 
@@ -89,6 +93,10 @@ def show_structure_element_bar_chart(bar_ax, df_clean):
     legend_columns=2,
     label_fontsize=8,
     legend_fontsize=8,
+    chart_label=df_clean.columns[1],
+    chart_label_y=1.02,
+    legend_y=-0.45,
+    show_y_labels=False,
   )
 
 
@@ -103,12 +111,32 @@ def show_stacked_bar_chart(
   legend_columns,
   label_fontsize=8,
   legend_fontsize=9,
+  title=None,
+  title_y=1.03,
+  chart_label=None,
+  chart_label_y=1.02,
+  legend_y=-0.25,
+  show_y_labels=True,
 ):
   rows = list(df_clean[row_column])
   elements = list(df_clean.columns[1:])
 
   bar_ax.clear()
   bar_ax.set_axis_on()
+
+  if title is not None:
+    bar_ax.set_title(title, y=title_y)
+
+  if chart_label is not None:
+    bar_ax.text(
+      0.5,
+      chart_label_y,
+      chart_label,
+      transform=bar_ax.transAxes,
+      ha='center',
+      va='bottom',
+      fontsize=9,
+    )
 
   for bar_index, element in enumerate(elements):
     left = 0
@@ -133,7 +161,10 @@ def show_stacked_bar_chart(
   bar_ax.set_xlim(0, 1)
   bar_ax.set_xticks([])
   bar_ax.set_yticks(range(len(elements)))
-  bar_ax.set_yticklabels(elements, fontsize=label_fontsize)
+  if show_y_labels:
+    bar_ax.set_yticklabels(elements, fontsize=label_fontsize)
+  else:
+    bar_ax.set_yticklabels([])
   bar_ax.invert_yaxis()
 
   for spine in ['top', 'right', 'left', 'bottom']:
@@ -147,7 +178,7 @@ def show_stacked_bar_chart(
   bar_ax.legend(
     handles=legend_handles,
     loc='lower center',
-    bbox_to_anchor=(0.5, -0.25),
+    bbox_to_anchor=(0.5, legend_y),
     ncol=legend_columns,
     fontsize=legend_fontsize,
     frameon=False,
