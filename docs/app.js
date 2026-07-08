@@ -5,14 +5,15 @@ const {
   initCharts,
   initMap,
   updateDamageChart,
+  updateMaterialDisplays,
   updateMap,
   updateSamplingChart,
-  updateTables,
 } = window.PlotView;
 
 const appState = {
   charts: null,
   currentFire: 'palisades',
+  currentDisplay: 'table',
   displayedDamages: [...damageList],
   map: null,
   perimeterFeatures: [],
@@ -36,13 +37,19 @@ function updateDashboard() {
   const displayedFeatures = getCurrentDisplayedFeatures();
 
   document.getElementById('map-title').textContent = `${appState.currentFire} fire structures map`;
+  document.querySelector('.figure').dataset.display = appState.currentDisplay;
+
   updateMap(appState.map, displayedFeatures, appState.perimeterFeatures, appState.currentFire);
   updateDamageChart(appState.charts.damageChart, allFeatures, appState.displayedDamages);
   updateSamplingChart(appState.charts.samplingChart, appState.currentFire);
-  updateTables(displayedFeatures, appState.charts.materialChart);
+  updateMaterialDisplays(displayedFeatures, appState.charts);
 
   document.querySelectorAll('#fire-buttons button').forEach((button) => {
     button.classList.toggle('active', button.dataset.fire === appState.currentFire);
+  });
+
+  document.querySelectorAll('#display-buttons button').forEach((button) => {
+    button.classList.toggle('active', button.dataset.display === appState.currentDisplay);
   });
 }
 
@@ -59,6 +66,20 @@ function makeFireButtons() {
     }
 
     appState.currentFire = button.dataset.fire;
+    updateDashboard();
+  });
+}
+
+function makeDisplayButtons() {
+  const host = document.getElementById('display-buttons');
+
+  host.addEventListener('click', (event) => {
+    const button = event.target.closest('button[data-display]');
+    if (!button) {
+      return;
+    }
+
+    appState.currentDisplay = button.dataset.display;
     updateDashboard();
   });
 }
@@ -96,6 +117,7 @@ async function loadData() {
 
 async function main() {
   makeFireButtons();
+  makeDisplayButtons();
   makeDamageFilters();
   appState.map = initMap();
   appState.charts = initCharts();

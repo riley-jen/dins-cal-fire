@@ -13,7 +13,7 @@
     <link rel="stylesheet" href="styles.css?v=dev">
   </head>
   <body>
-    <main class="figure" aria-label="CAL FIRE structure data dashboard">
+    <main class="figure" data-display="table" aria-label="CAL FIRE structure data dashboard">
       <section class="panel map-panel">
         <h1 id="map-title">california fire</h1>
         <div id="map"></div>
@@ -34,31 +34,58 @@
         <canvas id="sampling-chart"></canvas>
       </section>
 
-      <section class="panel combustibility-panel">
+      <nav id="display-buttons" class="display-buttons" aria-label="display mode">
+        <button type="button" data-display="table">table</button>
+        <button type="button" data-display="bar chart">bar chart</button>
+      </nav>
+
+      <section class="panel combustibility-panel table-view">
         <h2>combustibility</h2>
         <div id="combustibility-table" class="table-host compact-table"></div>
       </section>
 
-      <section class="panel material-table-panel">
+      <section class="panel material-table-panel table-view">
         <h2>structural composition and material</h2>
         <div id="material-table" class="table-host"></div>
       </section>
 
-      <section class="panel material-bar-panel">
+      <section class="panel combustibility-bar-panel chart-view">
+        <h2>combustibility</h2>
+        <canvas id="combustibility-chart"></canvas>
+      </section>
+
+      <section class="panel material-bar-panel chart-view">
+        <h2>structural composition and material</h2>
         <canvas id="material-chart"></canvas>
       </section>
 
-      <section class="panel feature-panel eaves-panel">
-        <h2>building properties</h2>
+      <section class="panel feature-panel eaves-panel table-view">
         <div id="eaves-table" class="table-host mini-table"></div>
       </section>
 
-      <section class="panel feature-panel ventscreen-panel">
+      <section class="panel feature-panel ventscreen-panel table-view">
         <div id="ventscreen-table" class="table-host mini-table"></div>
       </section>
 
-      <section class="panel feature-panel windowpane-panel">
+      <section class="panel feature-panel windowpane-panel table-view">
+        <h2>building properties</h2>
         <div id="windowpane-table" class="table-host mini-table"></div>
+      </section>
+
+      <section class="panel feature-chart-panel eaves-chart-panel chart-view">
+        <h3>eaves</h3>
+        <canvas id="eaves-chart"></canvas>
+      </section>
+
+      <section class="panel feature-chart-panel ventscreen-chart-panel chart-view">
+        <h3>mesh screen</h3>
+        <canvas id="ventscreen-chart"></canvas>
+      </section>
+
+      <section class="panel feature-chart-panel windowpane-chart-panel chart-view">
+        <h2>building properties</h2>
+        <h3>window pane</h3>
+        <canvas id="windowpane-chart"></canvas>
       </section>
 
       <nav id="fire-buttons" class="fire-buttons" aria-label="fire selection"></nav>
