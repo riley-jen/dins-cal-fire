@@ -32,6 +32,23 @@ function renderTable(hostId, columns, rows) {
   host.innerHTML = `<table><thead><tr>${header}</tr></thead><tbody>${body}</tbody></table>`;
 }
 
+const combustibilityColors = {
+  combustible: '#B22222',
+  'non-combustible': '#4682B4',
+  'n/a': '#D3D3D3',
+};
+
+const structureElementColors = {
+  enclosed: '#B22222',
+  unenclosed: '#4682B4',
+  '<= 1/8"': '#4682B4',
+  '> 1/8"': '#B22222',
+  unscreened: '#FFD700',
+  'single pane': '#B22222',
+  'multi pane': '#4682B4',
+  'n/a': '#D3D3D3',
+};
+
 const samplingAxisLabelPlugin = {
   id: 'samplingAxisLabelPlugin',
   afterDraw(chart) {
@@ -53,6 +70,56 @@ const samplingAxisLabelPlugin = {
     ctx.restore();
   },
 };
+
+function makeStackedBarChart(canvasId, labels, compact = false) {
+  return new Chart(document.getElementById(canvasId), {
+    type: 'bar',
+    data: {
+      labels,
+      datasets: [],
+    },
+    options: {
+      indexAxis: 'y',
+      animation: false,
+      maintainAspectRatio: false,
+      layout: {
+        padding: {
+          top: compact ? 2 : 0,
+          bottom: compact ? 12 : 0,
+        },
+      },
+      scales: {
+        x: {
+          stacked: true,
+          min: 0,
+          max: 100,
+          display: false,
+        },
+        y: {
+          stacked: true,
+          display: !compact,
+          grid: { display: false },
+          ticks: {
+            autoSkip: false,
+            color: '#151515',
+            font: { size: compact ? 8 : 10 },
+          },
+        },
+      },
+      plugins: {
+        legend: {
+          position: 'bottom',
+          labels: {
+            boxWidth: compact ? 9 : 12,
+            padding: compact ? 12 : 10,
+            font: { size: compact ? 8 : 9 },
+          },
+        },
+        tooltip: { enabled: false },
+      },
+    },
+  });
+}
 
 function initMap() {
   const map = L.map('map', {
@@ -179,45 +246,26 @@ function initCharts() {
     plugins: [samplingAxisLabelPlugin],
   });
 
-  const materialChart = new Chart(document.getElementById('material-chart'), {
-    type: 'bar',
-    data: {
-      labels: ['roof', 'side', 'ground deck', 'elevated deck'],
-      datasets: [],
-    },
-    options: {
-      indexAxis: 'y',
-      animation: false,
-      maintainAspectRatio: false,
-      scales: {
-        x: {
-          stacked: true,
-          min: 0,
-          max: 100,
-          display: false,
-        },
-        y: {
-          stacked: true,
-          grid: { display: false },
-        },
-      },
-      plugins: {
-        legend: {
-          position: 'bottom',
-          labels: {
-            boxWidth: 12,
-            font: { size: 9 },
-          },
-        },
-        tooltip: { enabled: false },
-      },
-    },
-  });
+  const materialChart = makeStackedBarChart(
+    'material-chart',
+    ['roof', 'side', 'ground deck', 'elevated deck'],
+  );
+  const combustibilityChart = makeStackedBarChart(
+    'combustibility-chart',
+    ['roof', 'side', 'ground deck', 'elevated deck', 'patio cover', 'fence'],
+  );
+  const eavesChart = makeStackedBarChart('eaves-chart', ['eaves'], true);
+  const ventscreenChart = makeStackedBarChart('ventscreen-chart', ['mesh screen'], true);
+  const windowpaneChart = makeStackedBarChart('windowpane-chart', ['window pane'], true);
 
   return {
+    combustibilityChart,
     damageChart,
+    eavesChart,
     materialChart,
     samplingChart,
+    ventscreenChart,
+    windowpaneChart,
   };
 }
 
@@ -272,28 +320,69 @@ function updateSamplingChart(samplingChart, currentFire) {
   samplingChart.update();
 }
 
-function updateMaterialChart(materialChart, materialRows) {
-  materialChart.data.datasets = plotMaterials.map((material) => {
-    const row = materialRows.find((candidate) => candidate.material === material);
+function updateStackedBarChart(chart, rows, rowColumn, valueColumns, colors) {
+  chart.data.labels = valueColumns;
+  chart.data.datasets = rows.map((row) => {
+    const rowName = row[rowColumn];
     return {
-      label: material,
-      data: ['roof', 'side', 'ground deck', 'elevated deck'].map((element) => plotGetCellPercent(row[element])),
-      backgroundColor: plotMaterialColors[material],
+      label: rowName,
+      data: valueColumns.map((column) => plotGetCellPercent(row[column])),
+      backgroundColor: colors[rowName],
       borderColor: '#ffffff',
       borderWidth: 1,
     };
   });
-  materialChart.update();
+  chart.update();
 }
 
-function updateTables(displayedFeatures, materialChart) {
+function updateMaterialChart(materialChart, materialRows) {
+  updateStackedBarChart(
+    materialChart,
+    materialRows,
+    'material',
+    ['roof', 'side', 'ground deck', 'elevated deck'],
+    plotMaterialColors,
+  );
+}
+
+function updateCombustibilityChart(combustibilityChart, combustibilityRows) {
+  updateStackedBarChart(
+    combustibilityChart,
+    combustibilityRows,
+    'combustibility',
+    ['roof', 'side', 'ground deck', 'elevated deck', 'patio cover', 'fence'],
+    combustibilityColors,
+  );
+}
+
+function updateStructureChart(chart, config, rows) {
+  updateStackedBarChart(
+    chart,
+    rows,
+    config.columns[0],
+    config.columns.slice(1),
+    structureElementColors,
+  );
+}
+
+function updateMaterialDisplays(displayedFeatures, charts) {
   const materialRows = plotGetMaterialRows(displayedFeatures);
   renderTable('material-table', plotBuildingElementLabels, materialRows);
-  updateMaterialChart(materialChart, materialRows);
+  updateMaterialChart(charts.materialChart, materialRows);
 
-  renderTable('combustibility-table', plotCombustibilityConfig.columns, plotGetCombustibilityRows(displayedFeatures));
+  const combustibilityRows = plotGetCombustibilityRows(displayedFeatures);
+  renderTable('combustibility-table', plotCombustibilityConfig.columns, combustibilityRows);
+  updateCombustibilityChart(charts.combustibilityChart, combustibilityRows);
+
+  const structureCharts = {
+    'eaves-table': charts.eavesChart,
+    'ventscreen-table': charts.ventscreenChart,
+    'windowpane-table': charts.windowpaneChart,
+  };
   for (const config of plotStructureConfigs) {
-    renderTable(config.key, config.columns, plotGetStructureRows(displayedFeatures, config));
+    const rows = plotGetStructureRows(displayedFeatures, config);
+    renderTable(config.key, config.columns, rows);
+    updateStructureChart(structureCharts[config.key], config, rows);
   }
 }
 
@@ -301,8 +390,8 @@ window.PlotView = {
   initCharts,
   initMap,
   updateDamageChart,
+  updateMaterialDisplays,
   updateMap,
   updateSamplingChart,
-  updateTables,
 };
 })();
