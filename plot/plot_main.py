@@ -14,6 +14,7 @@ from subplot.plot_table import show_combustibility_table, show_table, show_struc
 fig = None
 buttons = []
 display_buttons = []
+show_na_box = None
 damage_boxes = []
 fires_list = ['palisades', 'mountain', 'eaton', 'franklin', 'line', 'bridge']
 structure_data_by_fire = {}
@@ -21,6 +22,7 @@ perimeter_data_by_fire = {}
 displayed_damages = extract_structure_data.damage_list.copy()
 current_fire_name = None
 current_display = 'table'
+show_na = True
 
 map_ax = None
 pie_ax = None
@@ -123,6 +125,21 @@ def make_display_buttons(buttons):
   return buttons
 
 
+def make_show_na_box():
+  global show_na_box
+
+  box_space = fig.add_axes([0.845, 0.9, 0.08, 0.05])
+  box_space.set_frame_on(False)
+  box_space.set_xticks([])
+  box_space.set_yticks([])
+
+  show_na_box = CheckButtons(box_space, ['show n/a'], [show_na])
+  show_na_box.on_clicked(lambda label: toggle_show_na())
+  show_na_box.ax.set_visible(False)
+
+  return show_na_box
+
+
 def make_damage_boxes(boxes, damage_list):
   for i in range(len(damage_list)):
     damage = damage_list[i]
@@ -158,6 +175,17 @@ def set_display_mode(display_mode):
     plot_fire(current_fire_name)
   else:
     update_display_button_features()
+    plt.draw()
+
+
+def toggle_show_na():
+  global show_na
+  show_na = not show_na
+
+  if current_fire_name is not None:
+    plot_fire(current_fire_name)
+  else:
+    update_show_na_box_features()
     plt.draw()
 
 
@@ -199,6 +227,20 @@ def update_display_button_features():
     else:
       display_btn.ax.set_facecolor('0.95')
 
+  update_show_na_box_features()
+
+
+def update_show_na_box_features():
+  if show_na_box is None:
+    return
+
+  show_na_box.ax.set_visible(current_display == 'bar chart')
+
+  if show_na_box.get_status()[0] != show_na:
+    show_na_box.eventson = False
+    show_na_box.set_active(0)
+    show_na_box.eventson = True
+
 
 def clear_structure_element_axes():
   for structure_element_ax in structure_element_axes.values():
@@ -213,8 +255,8 @@ def show_material_display(structure_data):
     show_combustibility_table(combustibility_ax, structure_data)
     show_structure_element_tables(structure_data)
   else:
-    show_material_bar_chart(table_ax, structure_data)
-    show_combustibility_bar_chart(combustibility_ax, structure_data)
+    show_material_bar_chart(table_ax, structure_data, show_na)
+    show_combustibility_bar_chart(combustibility_ax, structure_data, show_na)
     show_structure_element_bar_charts(structure_data)
 
 
@@ -248,7 +290,8 @@ def show_structure_element_bar_charts(structure_data):
     df_clean = structure_data['structure_element_tables'][table_key]
     show_structure_element_bar_chart(
       structure_element_axes[table_key],
-      df_clean
+      df_clean,
+      show_na
     )
     if table_key == 'windowpane_table':
       structure_element_axes[table_key].set_title('building properties', y=1.35)
@@ -281,6 +324,7 @@ def make_main_window(input_figure):
   make_damage_boxes(damage_boxes, extract_structure_data.damage_list)
   make_fire_buttons(buttons, fires_list)
   make_display_buttons(display_buttons)
+  make_show_na_box()
 
   apply_damage_features()
   apply_material_features()
