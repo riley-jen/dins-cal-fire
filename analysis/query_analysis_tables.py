@@ -3,6 +3,9 @@ Query exported analysis tables from the command line.
 
 Criteria are represented as a list of (column, value) pairs, for example:
 [('fire', 'palisades'), ('roof_material', 'wood')]
+
+Repeated columns are treated as OR values:
+[('fire', 'palisades'), ('fire', 'mountain')] matches either fire.
 """
 
 import csv
@@ -53,7 +56,18 @@ DAMAGE_ORDER = [
 
 
 def normalize_criteria(criteria):
-  return [(column, str(value)) for column, value in criteria]
+  normalized = {}
+
+  for column, value in criteria:
+    if column not in normalized:
+      normalized[column] = set()
+
+    if isinstance(value, (list, tuple, set)):
+      normalized[column].update(str(item) for item in value)
+    else:
+      normalized[column].add(str(value))
+
+  return normalized
 
 
 def get_count(criteria):
@@ -64,7 +78,7 @@ def get_count(criteria):
     reader = csv.DictReader(file)
 
     for row in reader:
-      if all(row[column] == value for column, value in criteria):
+      if all(row[column] in values for column, values in criteria.items()):
         total += int(row['count'])
 
   return total
@@ -103,7 +117,12 @@ def sort_values(column, values):
   if column == 'damage':
     return [value for value in DAMAGE_ORDER if value in values]
 
-  return sorted(values)
+  sorted_values = sorted(value for value in values if value != 'n/a')
+
+  if 'n/a' in values:
+    sorted_values.append('n/a')
+
+  return sorted_values
 
 
 def make_label(column, value):
@@ -113,20 +132,61 @@ def make_label(column, value):
   return value
 
 
-def ask_choice(question, options):
-  option_text = ', '.join(
+def make_option_text(options, has_none):
+  option_labels = [
     f'{label} ({index})'
     for index, (label, _) in enumerate(options, start=1)
-  )
+  ]
+
+  if has_none:
+    option_labels.append('none (0)')
+
+  return ', '.join(option_labels)
+
+
+def parse_choices(answer, option_count, has_none, allow_multiple):
+  if answer == '0' and has_none:
+    return []
+
+  raw_choices = [choice.strip() for choice in answer.split(',')]
+
+  if not allow_multiple and len(raw_choices) > 1:
+    return None
+
+  if any(not choice.isdigit() for choice in raw_choices):
+    return None
+
+  choices = [int(choice) for choice in raw_choices]
+
+  if 0 in choices:
+    return [] if has_none and len(choices) == 1 else None
+
+  if any(choice < 1 or choice > option_count for choice in choices):
+    return None
+
+  if len(set(choices)) != len(choices):
+    return None
+
+  return choices
+
+
+def ask_choice(question, options, allow_multiple=False, has_none=False):
+  option_text = make_option_text(options, has_none)
   answer = input(f'{question}: {option_text}\n> ').strip()
+  choices = parse_choices(answer, len(options), has_none, allow_multiple)
 
-  if answer.isdigit():
-    index = int(answer)
-    if 1 <= index <= len(options):
-      return options[index - 1][1]
+  if choices is not None:
+    if not choices:
+      return [] if allow_multiple else None
 
-  print('Please enter one of the listed numbers.')
-  return ask_choice(question, options)
+    values = [options[index - 1][1] for index in choices]
+    return values if allow_multiple else values[0]
+
+  if allow_multiple:
+    print('Please enter listed numbers separated by commas, or 0 for none.')
+  else:
+    print('Please enter one of the listed numbers.')
+  return ask_choice(question, options, allow_multiple, has_none)
 
 
 def ask_test_type():
@@ -144,34 +204,33 @@ def ask_base_criteria(available_values):
       (make_label(column, value), value)
       for value in available_values[column]
     ]
-    options.append(('none', None))
 
-    value = ask_choice(PROMPTS[column], options)
-    if value is not None:
+    selected_values = ask_choice(PROMPTS[column], options, allow_multiple=True, has_none=True)
+    for value in selected_values:
       criteria.append((column, value))
 
   return criteria
 
 
+def get_selected_columns(criteria):
+  return list(dict.fromkeys(column for column, _ in criteria))
+
+
+def criteria_for_columns(criteria, selected_columns):
+  return [
+    (column, value)
+    for column, value in criteria
+    if column in selected_columns
+  ]
+
+
 def ask_denominator_criteria(numerator_criteria):
-  denominator_criteria = []
-  remaining_criteria = numerator_criteria.copy()
+  selected_columns = get_selected_columns(numerator_criteria)
+  options = [(column, column) for column in selected_columns]
+  denominator_columns = ask_choice('choose criteria', options, allow_multiple=True, has_none=True)
 
-  while remaining_criteria:
-    options = [
-      (f'{column} = {value}', (column, value))
-      for column, value in remaining_criteria
-    ]
-    options.append(('none', None))
+  return criteria_for_columns(numerator_criteria, denominator_columns)
 
-    chosen = ask_choice('choose criteria', options)
-    if chosen is None:
-      break
-
-    denominator_criteria.append(chosen)
-    remaining_criteria.remove(chosen)
-
-  return denominator_criteria
 
 def ask_again():
   return ask_choice('choose next', [
