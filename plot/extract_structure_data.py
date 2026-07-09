@@ -72,8 +72,8 @@ def get_gdf_for_damages(damage_gdfs, displayed_damages):
 materials = ['asphalt', 'composite', 'masonry', 'metal', 'tile', 'vinyl', 'wood', 'n/a']
 building_elements = ['ROOFCONSTRUCTION', 'EXTERIORSIDING', 'DECKPORCHONGRADE', 'DECKPORCHELEVATED']
 building_elements_display = ['material', 'roof', 'side', 'ground deck', 'elevated deck']
-combustible_materials = ['asphalt', 'composite', 'vinyl', 'wood']
-non_combustible_materials = ['masonry', 'metal', 'tile']
+combustible_materials = ['asphalt', 'composite', 'metal', 'vinyl', 'wood']
+non_combustible_materials = ['masonry', 'tile']
 
 
 '''
