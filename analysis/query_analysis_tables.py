@@ -79,3 +79,131 @@ def get_percentage(numerator_criteria, denominator_criteria):
 
   return (numerator / denominator) * 100
 
+
+def get_available_values():
+  values = {column: set() for column in QUERY_COLUMNS}
+
+  with CONDITION_FILE.open(newline='') as file:
+    reader = csv.DictReader(file)
+
+    for row in reader:
+      for column in QUERY_COLUMNS:
+        values[column].add(row[column])
+
+  return {
+    column: sort_values(column, column_values)
+    for column, column_values in values.items()
+  }
+
+
+def sort_values(column, values):
+  if column == 'fire':
+    return [value for value in FIRE_ORDER if value in values]
+
+  if column == 'damage':
+    return [value for value in DAMAGE_ORDER if value in values]
+
+  return sorted(values)
+
+
+def make_label(column, value):
+  if column == 'fire':
+    return FIRE_LABELS.get(value, value)
+
+  return value
+
+
+def ask_choice(question, options):
+  option_text = ', '.join(
+    f'{label} ({index})'
+    for index, (label, _) in enumerate(options, start=1)
+  )
+  answer = input(f'{question}: {option_text}\n> ').strip()
+
+  if answer.isdigit():
+    index = int(answer)
+    if 1 <= index <= len(options):
+      return options[index - 1][1]
+
+  print('Please enter one of the listed numbers.')
+  return ask_choice(question, options)
+
+
+def ask_test_type():
+  return ask_choice('choose test', [
+    ('count', 'count'),
+    ('percentage', 'percentage'),
+  ])
+
+
+def ask_base_criteria(available_values):
+  criteria = []
+
+  for column in QUERY_COLUMNS:
+    options = [
+      (make_label(column, value), value)
+      for value in available_values[column]
+    ]
+    options.append(('none', None))
+
+    value = ask_choice(PROMPTS[column], options)
+    if value is not None:
+      criteria.append((column, value))
+
+  return criteria
+
+
+def ask_denominator_criteria(numerator_criteria):
+  denominator_criteria = []
+  remaining_criteria = numerator_criteria.copy()
+
+  while remaining_criteria:
+    options = [
+      (f'{column} = {value}', (column, value))
+      for column, value in remaining_criteria
+    ]
+    options.append(('none', None))
+
+    chosen = ask_choice('choose criteria', options)
+    if chosen is None:
+      break
+
+    denominator_criteria.append(chosen)
+    remaining_criteria.remove(chosen)
+
+  return denominator_criteria
+
+def ask_again():
+  return ask_choice('choose next', [
+    ('again', 'again'),
+    ('end', 'end'),
+  ])
+
+
+def run_query(available_values):
+  test_type = ask_test_type()
+  criteria = ask_base_criteria(available_values)
+
+  if test_type == 'count':
+    print(f'count: {get_count(criteria)}')
+    return
+
+  denominator_criteria = ask_denominator_criteria(criteria)
+  percentage = get_percentage(criteria, denominator_criteria)
+  print(f'percentage: {percentage:.2f}%')
+
+
+def run_queries(available_values):
+  run_query(available_values)
+
+  if ask_again() == 'again':
+    run_queries(available_values)
+
+
+def main():
+  available_values = get_available_values()
+  run_queries(available_values)
+
+
+if __name__ == '__main__':
+  main()
