@@ -52,7 +52,7 @@ def get_cell_percent(cell_value):
 '''
 draws four equal-length stacked bars from the material table percentages
 '''
-def show_material_bar_chart(bar_ax, structure_data):
+def show_material_bar_chart(bar_ax, structure_data, show_na=True):
   df_clean = structure_data['material_table']
   show_stacked_bar_chart(
     bar_ax,
@@ -62,13 +62,14 @@ def show_material_bar_chart(bar_ax, structure_data):
     legend_columns=4,
     title='structural composition and material',
     title_y=1.08,
+    show_na=show_na,
   )
 
 
 '''
 draws a combustibility stacked bar chart from the combustibility table
 '''
-def show_combustibility_bar_chart(bar_ax, structure_data):
+def show_combustibility_bar_chart(bar_ax, structure_data, show_na=True):
   df_clean = structure_data['structure_element_tables']['combustibility_table']
   show_stacked_bar_chart(
     bar_ax,
@@ -78,13 +79,14 @@ def show_combustibility_bar_chart(bar_ax, structure_data):
     legend_columns=3,
     title='combustibility',
     title_y=1.10,
+    show_na=show_na,
   )
 
 
 '''
 draws one small building element stacked bar chart
 '''
-def show_structure_element_bar_chart(bar_ax, df_clean):
+def show_structure_element_bar_chart(bar_ax, df_clean, show_na=True):
   show_stacked_bar_chart(
     bar_ax,
     df_clean,
@@ -97,6 +99,7 @@ def show_structure_element_bar_chart(bar_ax, df_clean):
     chart_label_y=1.02,
     legend_y=-0.45,
     show_y_labels=False,
+    show_na=show_na,
   )
 
 
@@ -117,6 +120,7 @@ def show_stacked_bar_chart(
   chart_label_y=1.02,
   legend_y=-0.25,
   show_y_labels=True,
+  show_na=True,
 ):
   rows = list(df_clean[row_column])
   elements = list(df_clean.columns[1:])
@@ -140,10 +144,27 @@ def show_stacked_bar_chart(
 
   for bar_index, element in enumerate(elements):
     left = 0
+    widths = {}
 
     for row_name in rows:
       row_data = df_clean[df_clean[row_column] == row_name]
-      width = get_cell_percent(row_data[element].iloc[0])
+      widths[row_name] = get_cell_percent(row_data[element].iloc[0])
+
+    if not show_na:
+      visible_total = sum(
+        width
+        for row_name, width in widths.items()
+        if row_name != 'n/a'
+      )
+
+      for row_name in widths:
+        if row_name == 'n/a' or visible_total == 0:
+          widths[row_name] = 0
+        else:
+          widths[row_name] = widths[row_name] / visible_total
+
+    for row_name in rows:
+      width = widths[row_name]
 
       if width > 0:
         bar_ax.barh(
