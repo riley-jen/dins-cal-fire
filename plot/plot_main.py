@@ -4,6 +4,7 @@ from matplotlib.widgets import Button, CheckButtons
 import extract_structure_data
 import extract_perimeter_data
 from subplot.plot_bar import show_combustibility_bar_chart, show_material_bar_chart, show_structure_element_bar_chart
+from subplot.plot_histogram import show_year_built_histogram
 from subplot.plot_map import show_fire_map
 from subplot.plot_pie import show_damage_pie
 from subplot.plot_sampling import show_sampling_scatter
@@ -27,6 +28,7 @@ show_na = True
 map_ax = None
 pie_ax = None
 sampling_ax = None
+histogram_ax = None
 table_ax = None
 combustibility_ax = None
 structure_element_axes = {}
@@ -34,6 +36,7 @@ structure_element_axes = {}
 damage_map_position = [0.03, 0.50, 0.33, 0.44]
 damage_pie_position = [0.375, 0.3, 0.12, 0.17]
 damage_sampling_position = [0.075, 0.32, 0.27, 0.14]
+year_built_histogram_position = [0.075, 0.10, 0.39, 0.17]
 pie_legend_anchor = [0.37, 0.5]
 
 material_table_position = [0.55, 0.365, 0.4, 0.34]
@@ -66,6 +69,7 @@ def plot_fire(fire_name):
   map_ax.clear()
   pie_ax.clear()
   sampling_ax.clear()
+  histogram_ax.clear()
   table_ax.clear()
   combustibility_ax.clear()
   clear_structure_element_axes()
@@ -76,6 +80,7 @@ def plot_fire(fire_name):
   show_fire_map(map_ax, structure_data, perimeter_data, damage_map_position, displayed_damages)
   show_damage_pie(pie_ax, structure_data, pie_legend_anchor, displayed_damages)
   show_sampling_scatter(sampling_ax, fire_name)
+  show_year_built_histogram(histogram_ax, structure_data, displayed_damages)
   apply_damage_features(fire_name)
   displayed_gdf = extract_structure_data.get_gdf_for_damages(
     structure_data['damage_gdfs'],
@@ -203,6 +208,7 @@ def apply_damage_features(fire_name = ''):
 
   if fire_name == '':
     sampling_ax.axis('off')
+    histogram_ax.axis('off')
 
 
 def apply_material_features(fire_name = ''):
@@ -299,7 +305,7 @@ def show_structure_element_bar_charts(structure_data):
 
 # --- SET UP ---
 def make_main_window(input_figure):
-  global fig, map_ax, pie_ax, sampling_ax, table_ax, combustibility_ax, structure_element_axes
+  global fig, map_ax, pie_ax, sampling_ax, histogram_ax, table_ax, combustibility_ax, structure_element_axes
   global buttons, display_buttons, damage_boxes
 
   preload_data()
@@ -311,6 +317,7 @@ def make_main_window(input_figure):
   map_ax = fig.add_axes(damage_map_position)
   pie_ax = fig.add_axes(damage_pie_position)
   sampling_ax = fig.add_axes(damage_sampling_position)
+  histogram_ax = fig.add_axes(year_built_histogram_position)
   table_ax = fig.add_axes(material_table_position)
   combustibility_ax = fig.add_axes(combustibility_table_position)
   structure_element_axes = {
