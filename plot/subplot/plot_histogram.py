@@ -2,6 +2,12 @@
 this program draws the stacked year-built histogram used in the damage window
 '''
 
+min_year_built = 1895
+max_year_built = 2025
+min_labeled_year_built = 1900
+max_labeled_year_built = 2020
+
+
 
 def show_year_built_histogram(histogram_ax, structure_data, displayed_damages):
   year_built_counts = structure_data['year_built_damage_counts']
@@ -13,12 +19,13 @@ def show_year_built_histogram(histogram_ax, structure_data, displayed_damages):
   ]
   years = [
     year for year in year_built_counts
-    if 1900 <= year <= 2020
+    if min_year_built <= year <= max_year_built
   ]
   unspecified_count = sum(
     year_built_counts.get(0, {}).get(damage, 0)
     for damage in selected_damages
   )
+  out_of_range_count = get_out_of_range_count(year_built_counts, selected_damages)
 
   histogram_ax.clear()
   histogram_ax.set_axis_on()
@@ -34,11 +41,11 @@ def show_year_built_histogram(histogram_ax, structure_data, displayed_damages):
       va='center',
       fontsize=9,
     )
-    format_histogram_axes(histogram_ax, unspecified_count)
+    format_histogram_axes(histogram_ax, unspecified_count, out_of_range_count)
     add_histogram_hover(histogram_ax)
     return
 
-  year_range = list(range(min(years), max(years) + 1))
+  year_range = list(range(min_year_built, max_year_built + 1))
   bottoms = [0 for _ in year_range]
 
   for damage in selected_damages:
@@ -74,22 +81,41 @@ def show_year_built_histogram(histogram_ax, structure_data, displayed_damages):
 
   histogram_ax.set_xlim(min(year_range) - 0.5, max(year_range) + 0.5)
   histogram_ax.set_ylim(0, max(bottoms) * 1.1 if max(bottoms) > 0 else 1)
-  format_histogram_axes(histogram_ax, unspecified_count)
+  format_histogram_axes(histogram_ax, unspecified_count, out_of_range_count)
   add_histogram_hover(histogram_ax)
 
 
-def format_histogram_axes(histogram_ax, unspecified_count):
+def get_out_of_range_count(year_built_counts, selected_damages):
+  return sum(
+    damage_counts.get(damage, 0)
+    for year, damage_counts in year_built_counts.items()
+    for damage in selected_damages
+    if year != 0 and (year < min_year_built or year > max_year_built)
+  )
+
+
+def format_histogram_axes(histogram_ax, unspecified_count, out_of_range_count):
   histogram_ax.set_title('year built', fontsize=10)
   histogram_ax.set_xlabel('year built', fontsize=8, labelpad=2)
   histogram_ax.xaxis.set_label_coords(0.42, -0.18)
   histogram_ax.set_ylabel('number of buildings', fontsize=8, labelpad=2)
   histogram_ax.tick_params(axis='both', labelsize=7)
+  histogram_ax.set_xticks(range(min_labeled_year_built, max_labeled_year_built + 1, 20))
   histogram_ax.grid(axis='y', color='#D9D9D9', linewidth=0.7, zorder=1)
   histogram_ax.set_axisbelow(True)
   histogram_ax.text(
     1.02,
-    0.5,
+    0.62,
     'unspecified:\n' + str(unspecified_count),
+    transform=histogram_ax.transAxes,
+    ha='left',
+    va='center',
+    fontsize=8,
+  )
+  histogram_ax.text(
+    1.02,
+    0.36,
+    'out of range:\n' + str(out_of_range_count),
     transform=histogram_ax.transAxes,
     ha='left',
     va='center',
