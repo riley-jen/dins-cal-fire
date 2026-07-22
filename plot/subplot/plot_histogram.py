@@ -22,6 +22,7 @@ def show_year_built_histogram(histogram_ax, structure_data, displayed_damages):
 
   histogram_ax.clear()
   histogram_ax.set_axis_on()
+  histogram_ax._year_built_hover_patches = []
 
   if len(years) == 0 or len(selected_damages) == 0:
     histogram_ax.text(
@@ -34,6 +35,7 @@ def show_year_built_histogram(histogram_ax, structure_data, displayed_damages):
       fontsize=9,
     )
     format_histogram_axes(histogram_ax, unspecified_count)
+    add_histogram_hover(histogram_ax)
     return
 
   year_range = list(range(min(years), max(years) + 1))
@@ -45,7 +47,7 @@ def show_year_built_histogram(histogram_ax, structure_data, displayed_damages):
       for year in year_range
     ]
 
-    histogram_ax.bar(
+    bars = histogram_ax.bar(
       year_range,
       counts,
       bottom=bottoms,
@@ -56,6 +58,15 @@ def show_year_built_histogram(histogram_ax, structure_data, displayed_damages):
       label=damage,
     )
 
+    for year, count, bar in zip(year_range, counts, bars):
+      if count > 0:
+        bar._year_built_hover_text = (
+          'year: ' + str(year) + '\n'
+          + 'damage: ' + damage + '\n'
+          + 'count: ' + str(count)
+        )
+        histogram_ax._year_built_hover_patches.append(bar)
+
     bottoms = [
       bottom + count
       for bottom, count in zip(bottoms, counts)
@@ -64,6 +75,7 @@ def show_year_built_histogram(histogram_ax, structure_data, displayed_damages):
   histogram_ax.set_xlim(min(year_range) - 0.5, max(year_range) + 0.5)
   histogram_ax.set_ylim(0, max(bottoms) * 1.1 if max(bottoms) > 0 else 1)
   format_histogram_axes(histogram_ax, unspecified_count)
+  add_histogram_hover(histogram_ax)
 
 
 def format_histogram_axes(histogram_ax, unspecified_count):
@@ -77,7 +89,7 @@ def format_histogram_axes(histogram_ax, unspecified_count):
   histogram_ax.text(
     1.02,
     0.5,
-    'unspecified year built\n' + str(unspecified_count),
+    'unspecified:\n' + str(unspecified_count),
     transform=histogram_ax.transAxes,
     ha='left',
     va='center',
@@ -86,3 +98,55 @@ def format_histogram_axes(histogram_ax, unspecified_count):
 
   for spine in ['top', 'right']:
     histogram_ax.spines[spine].set_visible(False)
+
+
+def add_histogram_hover(histogram_ax):
+  annotation = histogram_ax.annotate(
+    '',
+    xy=(0, 0),
+    xytext=(10, 10),
+    textcoords='offset points',
+    ha='left',
+    va='bottom',
+    fontsize=8,
+    bbox=dict(boxstyle='round,pad=0.3', facecolor='white', edgecolor='#888888', alpha=0.95),
+    arrowprops=dict(arrowstyle='->', color='#888888', linewidth=0.8),
+    zorder=10,
+  )
+  annotation.set_visible(False)
+  histogram_ax._year_built_hover_annotation = annotation
+
+  if getattr(histogram_ax, '_year_built_hover_cid', None) is not None:
+    return
+
+  histogram_ax._year_built_hover_cid = histogram_ax.figure.canvas.mpl_connect(
+    'motion_notify_event',
+    lambda event: update_histogram_hover(event, histogram_ax)
+  )
+
+
+def update_histogram_hover(event, histogram_ax):
+  annotation = getattr(histogram_ax, '_year_built_hover_annotation', None)
+
+  if annotation is None:
+    return
+
+  if event.inaxes != histogram_ax:
+    if annotation.get_visible():
+      annotation.set_visible(False)
+      histogram_ax.figure.canvas.draw_idle()
+    return
+
+  for bar in reversed(getattr(histogram_ax, '_year_built_hover_patches', [])):
+    contains, _ = bar.contains(event)
+
+    if contains:
+      annotation.xy = (event.xdata, event.ydata)
+      annotation.set_text(bar._year_built_hover_text)
+      annotation.set_visible(True)
+      histogram_ax.figure.canvas.draw_idle()
+      return
+
+  if annotation.get_visible():
+    annotation.set_visible(False)
+    histogram_ax.figure.canvas.draw_idle()
