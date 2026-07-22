@@ -70,7 +70,7 @@ def show_sampling_scatter(sampling_ax, fire_name):
     zorder=3,
   )
 
-  sampling_ax.set_title('sampling dates', pad=8)
+  sampling_ax.set_title('sampling dates', pad=8, fontsize=10)
   sampling_ax.set_xlim(-0.5, max(len(dates) - 0.5, 0.5))
   sampling_ax.set_ylim(-0.5, len(sampling_types) - 0.5)
   sampling_ax.set_xticks(range(len(dates)))

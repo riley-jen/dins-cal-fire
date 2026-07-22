@@ -32,8 +32,8 @@ combustibility_ax = None
 structure_element_axes = {}
 
 damage_map_position = [0.03, 0.50, 0.33, 0.44]
-damage_pie_position = [0.35, 0.1, 0.12, 0.38]
-damage_sampling_position = [0.075, 0.15, 0.27, 0.28]
+damage_pie_position = [0.375, 0.3, 0.12, 0.17]
+damage_sampling_position = [0.075, 0.32, 0.27, 0.14]
 pie_legend_anchor = [0.37, 0.5]
 
 material_table_position = [0.55, 0.365, 0.4, 0.34]
@@ -99,7 +99,7 @@ def make_fire_buttons(buttons, fires_list):
 
     space = 0.025
     width = (1-(0.5+space*(nf-1)))/nf
-    button_space = fig.add_axes([0.25+(width+space)*i, 0.04, width, 0.05]) # left, bottom, width, height
+    button_space = fig.add_axes([0.25+(width+space)*i, 0.02, width, 0.05]) # left, bottom, width, height
     
     fire_btn = Button(button_space, fire_name)
     fire_btn.on_clicked(lambda event, name=fire_name: plot_fire(name))
@@ -192,7 +192,7 @@ def toggle_show_na():
 def apply_damage_features(fire_name = ''):
   if fire_name != '':
     map_ax.set_title(fire_name + ' fire structures map')
-    pie_ax.set_title('damaged structures\ndistribution')
+    pie_ax.set_title('damage distribution', pad=8, fontsize=10)
   else:
     map_ax.set_title('california fire')
 
