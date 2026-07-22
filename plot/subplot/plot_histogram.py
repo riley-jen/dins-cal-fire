@@ -13,7 +13,7 @@ def show_year_built_histogram(histogram_ax, structure_data, displayed_damages):
   ]
   years = [
     year for year in year_built_counts
-    if year != 0
+    if 1900 <= year <= 2020
   ]
   unspecified_count = sum(
     year_built_counts.get(0, {}).get(damage, 0)
@@ -69,6 +69,7 @@ def show_year_built_histogram(histogram_ax, structure_data, displayed_damages):
 def format_histogram_axes(histogram_ax, unspecified_count):
   histogram_ax.set_title('year built', fontsize=10)
   histogram_ax.set_xlabel('year built', fontsize=8, labelpad=2)
+  histogram_ax.xaxis.set_label_coords(0.42, -0.18)
   histogram_ax.set_ylabel('number of buildings', fontsize=8, labelpad=2)
   histogram_ax.tick_params(axis='both', labelsize=7)
   histogram_ax.grid(axis='y', color='#D9D9D9', linewidth=0.7, zorder=1)

@@ -76,7 +76,7 @@ def show_sampling_scatter(sampling_ax, fire_name):
   sampling_ax.set_xticks(range(len(dates)))
   sampling_ax.set_xticklabels(dates, ha='right', fontsize=8)
   sampling_ax.set_yticks(range(len(sampling_types)))
-  sampling_ax.set_yticklabels(list(reversed(sampling_types)), fontsize=8)
+  sampling_ax.set_yticklabels(list(reversed(sampling_types)), fontsize=7)
   sampling_ax.grid(color='#D9D9D9', linewidth=0.7, zorder=1)
 
   for spine in ['top', 'right']:

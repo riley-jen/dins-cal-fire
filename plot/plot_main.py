@@ -35,8 +35,8 @@ structure_element_axes = {}
 
 damage_map_position = [0.03, 0.50, 0.33, 0.44]
 damage_pie_position = [0.375, 0.3, 0.12, 0.17]
-damage_sampling_position = [0.075, 0.32, 0.27, 0.14]
-year_built_histogram_position = [0.075, 0.10, 0.39, 0.17]
+damage_sampling_position = [0.055, 0.355, 0.29, 0.105]
+year_built_histogram_position = [0.055, 0.12, 0.41, 0.17]
 pie_legend_anchor = [0.37, 0.5]
 
 material_table_position = [0.55, 0.365, 0.4, 0.34]
