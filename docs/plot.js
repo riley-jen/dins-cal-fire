@@ -49,6 +49,10 @@ const structureElementColors = {
   'n/a': '#D3D3D3',
 };
 
+const minYearBuilt = 1900;
+const maxYearBuilt = 2025;
+const maxLabeledYearBuilt = 2020;
+
 const samplingAxisLabelPlugin = {
   id: 'samplingAxisLabelPlugin',
   afterDraw(chart) {
@@ -59,7 +63,7 @@ const samplingAxisLabelPlugin = {
     const { ctx, chartArea, scales } = chart;
     ctx.save();
     ctx.fillStyle = '#151515';
-    ctx.font = '10px Arial, Helvetica, sans-serif';
+    ctx.font = '9px Arial, Helvetica, sans-serif';
     ctx.textAlign = 'right';
     ctx.textBaseline = 'middle';
 
@@ -257,6 +261,88 @@ function initCharts() {
   const eavesChart = makeStackedBarChart('eaves-chart', ['eaves'], true);
   const ventscreenChart = makeStackedBarChart('ventscreen-chart', ['mesh screen'], true);
   const windowpaneChart = makeStackedBarChart('windowpane-chart', ['window pane'], true);
+  const yearBuiltChart = new Chart(document.getElementById('year-built-chart'), {
+    type: 'bar',
+    data: {
+      labels: getYearRange(),
+      datasets: [],
+    },
+    options: {
+      animation: false,
+      maintainAspectRatio: false,
+      layout: {
+        padding: {
+          top: 2,
+          right: 4,
+          bottom: 0,
+          left: 0,
+        },
+      },
+      scales: {
+        x: {
+          stacked: true,
+          grid: { display: false },
+          ticks: {
+            color: '#151515',
+            font: { size: 7 },
+            maxRotation: 0,
+            autoSkip: false,
+            callback(value) {
+              const year = this.getLabelForValue(value);
+              const numericYear = Number(year);
+              if (numericYear > maxLabeledYearBuilt || (numericYear - minYearBuilt) % 20 !== 0) {
+                return '';
+              }
+              return year;
+            },
+          },
+          title: {
+            display: true,
+            text: 'year built',
+            color: '#151515',
+            font: { size: 8 },
+            padding: { top: 0 },
+          },
+        },
+        y: {
+          stacked: true,
+          beginAtZero: true,
+          grid: { color: '#d9d9d9' },
+          ticks: {
+            color: '#151515',
+            font: { size: 7 },
+            precision: 0,
+          },
+          title: {
+            display: true,
+            text: 'number of buildings',
+            color: '#151515',
+            font: { size: 8 },
+            padding: { bottom: 2 },
+          },
+        },
+      },
+      plugins: {
+        legend: { display: false },
+        tooltip: {
+          callbacks: {
+            title(items) {
+              return `year: ${items[0].label}`;
+            },
+            label(item) {
+              return [
+                `damage: ${item.dataset.label}`,
+                `count: ${item.raw}`,
+              ];
+            },
+          },
+          filter(item) {
+            return item.raw > 0;
+          },
+        },
+      },
+    },
+  });
 
   return {
     combustibilityChart,
@@ -266,6 +352,7 @@ function initCharts() {
     samplingChart,
     ventscreenChart,
     windowpaneChart,
+    yearBuiltChart,
   };
 }
 
@@ -318,6 +405,64 @@ function updateSamplingChart(samplingChart, currentFire) {
   samplingChart.options.scales.x.max = Math.max(dates.length - 0.5, 0.5);
   samplingChart.options.scales.x.ticks.callback = (value) => dates[value] || '';
   samplingChart.update();
+}
+
+function getYearRange() {
+  return Array.from(
+    { length: maxYearBuilt - minYearBuilt + 1 },
+    (_, index) => minYearBuilt + index,
+  );
+}
+
+function getYearBuiltCounts(features) {
+  const counts = Object.fromEntries(
+    getYearRange().map((year) => [
+      year,
+      Object.fromEntries(plotDamageList.map((damage) => [damage, 0])),
+    ]),
+  );
+  const sideCounts = {
+    unspecified: 0,
+    outOfRange: 0,
+  };
+
+  for (const feature of features) {
+    const damage = plotCleanValue(feature.properties.DAMAGE);
+    if (!plotDamageList.includes(damage)) {
+      continue;
+    }
+
+    const year = Number(feature.properties.YEARBUILT);
+    if (!Number.isFinite(year) || year <= 0) {
+      sideCounts.unspecified += 1;
+    } else if (year < minYearBuilt || year > maxYearBuilt) {
+      sideCounts.outOfRange += 1;
+    } else {
+      counts[Math.trunc(year)][damage] += 1;
+    }
+  }
+
+  return { counts, sideCounts };
+}
+
+function updateYearBuiltChart(yearBuiltChart, displayedFeatures) {
+  const years = getYearRange();
+  const { counts, sideCounts } = getYearBuiltCounts(displayedFeatures);
+
+  yearBuiltChart.data.labels = years;
+  yearBuiltChart.data.datasets = plotDamageList.map((damage) => ({
+    label: damage,
+    data: years.map((year) => counts[year][damage]),
+    backgroundColor: plotDamageColors[damage],
+    borderColor: '#ffffff',
+    borderWidth: 0.2,
+    barPercentage: 1,
+    categoryPercentage: 1,
+  }));
+  yearBuiltChart.update();
+
+  document.getElementById('year-built-unspecified').textContent = sideCounts.unspecified;
+  document.getElementById('year-built-out-of-range').textContent = sideCounts.outOfRange;
 }
 
 function updateStackedBarChart(chart, rows, rowColumn, valueColumns, colors) {
@@ -393,5 +538,6 @@ window.PlotView = {
   updateMaterialDisplays,
   updateMap,
   updateSamplingChart,
+  updateYearBuiltChart,
 };
 })();

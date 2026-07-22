@@ -10,7 +10,7 @@
       integrity="sha256-p4NxAoJBhIINfQjEYl8Pbb9GgbLj8C3hH6pZm5x9i/E="
       crossorigin=""
     >
-    <link rel="stylesheet" href="styles.css?v=dev">
+    <link rel="stylesheet" href="styles.css?v=histogram">
   </head>
   <body>
     <main class="figure" data-display="table" aria-label="CAL FIRE structure data dashboard">
@@ -23,15 +23,29 @@
         <div id="damage-filters"></div>
       </section>
 
+      <div id="damage-legend" class="chart-legend"></div>
+
       <section class="panel pie-panel">
-        <h2>damaged structures<br>distribution</h2>
+        <h2>damage distribution</h2>
         <canvas id="damage-chart"></canvas>
-        <div id="damage-legend" class="chart-legend"></div>
       </section>
 
       <section class="panel sampling-panel">
         <h2>sampling dates</h2>
         <canvas id="sampling-chart"></canvas>
+      </section>
+
+      <section class="panel year-built-panel">
+        <h2>year built</h2>
+        <div class="year-built-layout">
+          <div class="year-built-chart-frame">
+            <canvas id="year-built-chart"></canvas>
+          </div>
+          <div class="year-built-stats">
+            <div>unspecified:<br><span id="year-built-unspecified">0</span></div>
+            <div>out of range:<br><span id="year-built-out-of-range">0</span></div>
+          </div>
+        </div>
       </section>
 
       <nav id="display-buttons" class="display-buttons" aria-label="display mode">
