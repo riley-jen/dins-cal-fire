@@ -51,6 +51,34 @@ def get_damage_data(fire_gdf):
 
 
 '''
+returns counts by year built, separated by damage type
+years that are missing or recorded as 0 are grouped under 0
+'''
+def get_year_built_damage_counts(fire_gdf):
+  year_built_counts = {}
+
+  for _, structure in fire_gdf.iterrows():
+    year_built = pd.to_numeric(structure.get('YEARBUILT'), errors='coerce')
+
+    if pd.isna(year_built) or year_built <= 0:
+      year_built = 0
+    else:
+      year_built = int(year_built)
+
+    damage = str(structure['DAMAGE']).strip().lower()
+
+    if damage not in damage_list:
+      continue
+
+    if year_built not in year_built_counts:
+      year_built_counts[year_built] = {damage_type: 0 for damage_type in damage_list}
+
+    year_built_counts[year_built][damage] += 1
+
+  return dict(sorted(year_built_counts.items()))
+
+
+'''
 returns one gdf containing only the currently displayed damage types
 if none are selected, it returns an empty gdf with the right columns
 '''
@@ -359,6 +387,7 @@ def get_data(fire_name):
     'fire_gdf': fire_gdf,
     'damage_count': damage_data['damage_count'],
     'damage_gdfs': damage_data['damage_gdfs'],
+    'year_built_damage_counts': get_year_built_damage_counts(fire_gdf),
     'total': damage_data['total'],
     'material_table': get_material_table(fire_gdf),
     'structure_element_tables': get_structure_element_tables(fire_gdf),
