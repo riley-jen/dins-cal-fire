@@ -49,8 +49,9 @@ const structureElementColors = {
   'n/a': '#D3D3D3',
 };
 
-const minYearBuilt = 1900;
+const minYearBuilt = 1895;
 const maxYearBuilt = 2025;
+const minLabeledYearBuilt = 1900;
 const maxLabeledYearBuilt = 2020;
 
 const samplingAxisLabelPlugin = {
@@ -290,7 +291,11 @@ function initCharts() {
             callback(value) {
               const year = this.getLabelForValue(value);
               const numericYear = Number(year);
-              if (numericYear > maxLabeledYearBuilt || (numericYear - minYearBuilt) % 20 !== 0) {
+              if (
+                numericYear < minLabeledYearBuilt
+                || numericYear > maxLabeledYearBuilt
+                || (numericYear - minLabeledYearBuilt) % 20 !== 0
+              ) {
                 return '';
               }
               return year;
