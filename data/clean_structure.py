@@ -18,6 +18,7 @@ web_clean_filename = Path(__file__).resolve().parent.parent / 'docs' / 'data' / 
 plot_columns = [
   'INCIDENTNAME',
   'DAMAGE',
+  'YEARBUILT',
   'ROOFCONSTRUCTION',
   'EXTERIORSIDING',
   'DECKPORCHONGRADE',

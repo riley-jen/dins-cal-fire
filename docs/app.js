@@ -8,6 +8,7 @@ const {
   updateMaterialDisplays,
   updateMap,
   updateSamplingChart,
+  updateYearBuiltChart,
 } = window.PlotView;
 
 const appState = {
@@ -42,6 +43,7 @@ function updateDashboard() {
   updateMap(appState.map, displayedFeatures, appState.perimeterFeatures, appState.currentFire);
   updateDamageChart(appState.charts.damageChart, allFeatures, appState.displayedDamages);
   updateSamplingChart(appState.charts.samplingChart, appState.currentFire);
+  updateYearBuiltChart(appState.charts.yearBuiltChart, displayedFeatures);
   updateMaterialDisplays(displayedFeatures, appState.charts);
 
   document.querySelectorAll('#fire-buttons button').forEach((button) => {
