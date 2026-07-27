@@ -1,6 +1,6 @@
 # Characterizing California Wildfire Impacts Using CAL FIRE Data
 
-This project uses CAL FIRE Damage Inspection Program (DINS) structure data and National Interagency Fire Center (NIFC/WFIGS) fire perimeter data to provide context for studies focusing on the carcinogenic effects of wildfires, such as CAFF-CRS (California Firefighter Cancer Research Study). This project's goal is to connect sampling events at the wildfire front with information about structures in the fire environment.
+This project uses CAL FIRE Damage Inspection Program (DINS) structure data and National Interagency Fire Center (NIFC/WFIGS) fire perimeter data to provide context for studies focusing on the carcinogenic effects of wildfires. This project's goal is to provide a tool that displays data and visuals neatly, allowing others to connect sampling events at the wildfire front with information about structures in the fire environment.
 
 ## Project Overview
 
