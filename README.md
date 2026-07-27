@@ -43,7 +43,13 @@ Damage categories currently shown are:
 - Destroyed (>50%)
 - Inaccessible
 
-Material values are grouped into categories such as asphalt, composite, masonry, metal, tile, vinyl, wood, and n/a.
+Material values are grouped into categories:
+
+- Asphalt, composite, masonry, metal, tile, vinyl, wood: material groups provided in the DINS data
+- N/a: a combination of null, "unknown", and "other" values
+- Combustibility: a categorization of materials based on online research (more info to be added) and DINS data
+  - Combustible: asphalt, composite, metal, vinyl, wood
+  - Non-combustible: masonry, tile
 
 ## Data Filtering And Cleaning Methodology
 
