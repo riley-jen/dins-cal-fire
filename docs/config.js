@@ -29,8 +29,8 @@ window.AppConfig = {
     tile: '#4682B4',
     'n/a': '#D3D3D3',
   },
-  combustibleMaterials: ['asphalt', 'composite', 'vinyl', 'wood'],
-  nonCombustibleMaterials: ['masonry', 'metal', 'tile'],
+  combustibleMaterials: ['asphalt', 'composite', 'metal', 'vinyl', 'wood'],
+  nonCombustibleMaterials: ['masonry', 'tile'],
   samplingTypes: ['Chips', 'Sorbent Tubes', 'Wipes', 'Wristbands'],
   samplingColors: {
     Chips: '#54d3a9',
