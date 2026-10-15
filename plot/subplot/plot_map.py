@@ -1,6 +1,13 @@
 import contextily as ctx
+import contextily.tile as ctx_tile
 import math
 import matplotlib.pyplot as plt
+
+ctx_tile.USER_AGENT = (
+    "DINSCalFire/1.0 "
+    "(+https://github.com/riley-jen/dins-cal-fire; "
+    "contact: rileykjen@gmail.com)"
+)
 
 
 # --- MAIN FUNCTIONS ---
